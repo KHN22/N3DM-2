@@ -1,0 +1,32 @@
+@model Marketplace.Models.Order
+@{
+    ViewData["Title"] = "Payment";
+}
+
+<div class="container" style="padding-top:28px;">
+    <h1>Payment</h1>
+</div>
+
+<div class="container" style="padding-top:12px;">
+    <div class="payment-panel">
+        <div class="qr-card">
+            <div class="qr-box">QR</div>
+        </div>
+
+        <div class="payment-meta">
+            <h2>Scan to pay</h2>
+            <p class="text-muted">Use your banking app or wallet to scan the QR code and pay <strong>$@Model.Total.ToString("F2")</strong>.</p>
+            <p>Order: <code>@Model.Id</code></p>
+
+            <form asp-action="PaymentProcess" method="post" style="margin-top:18px;">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <p class="text-muted">After completing payment in your app, click the button below to confirm.</p>
+                <div style="margin-top:12px;">
+                    <button class="btn btn-success">I have paid</button>
+                    <a class="btn" href="/Store/Checkout">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>

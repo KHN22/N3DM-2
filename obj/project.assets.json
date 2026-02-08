@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\N3DM-Market\\N3DMMarket.csproj",
+      "projectUniqueName": "D:\\N3DM-Market\\N3DM\\N3DMMarket.csproj",
       "projectName": "N3DMMarket",
-      "projectPath": "D:\\N3DM-Market\\N3DMMarket.csproj",
+      "projectPath": "D:\\N3DM-Market\\N3DM\\N3DMMarket.csproj",
       "packagesPath": "C:\\Users\\Khing\\.nuget\\packages\\",
-      "outputPath": "D:\\N3DM-Market\\obj\\",
+      "outputPath": "D:\\N3DM-Market\\N3DM\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Khing\\AppData\\Roaming\\NuGet\\NuGet.Config"

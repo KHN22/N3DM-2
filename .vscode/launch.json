@@ -2,6 +2,25 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": ".NET Launch (N3DMMarket)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/bin/Debug/net10.0/N3DMMarket.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "ASPNETCORE_URLS": "http://localhost:5001"
+      }
+    }
+  ]
+}
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
       "name": ".NET Core Launch (web)",
       "type": "coreclr",
       "request": "launch",

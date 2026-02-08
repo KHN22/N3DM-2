@@ -897,12 +897,6 @@ img {
 }
 
 .store-toolbar .search-box input {
-    padding-left: 40px;
-    height: 36px;
-    border-radius: 8px;
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
 }
 
 /* ============================================================
@@ -984,6 +978,9 @@ img {
         .product-detail { grid-template-columns: 1fr; }
         .payment-panel { flex-direction: column; }
     }
+
+    padding-left: 38px;
+}
 
 .store-toolbar .search-box svg {
     position: absolute;

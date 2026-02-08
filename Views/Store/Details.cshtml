@@ -1,0 +1,33 @@
+@model Marketplace.Models.ProductViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container" style="padding-top:28px;">
+    <div class="product-detail">
+        <div class="product-detail-thumb">3D Preview</div>
+        <div class="product-detail-info">
+            <h1>@Model.Title</h1>
+            <p class="text-muted">by @Model.Seller</p>
+            <p class="product-price" style="font-size:1.25rem; font-weight:700;">$@Model.Price.ToString("F2")</p>
+            <p class="product-category">Category: @Model.Category</p>
+            <div class="product-tags">
+                @foreach(var t in Model.Tags) { <span class="tag">@t</span> }
+            </div>
+
+            <div style="margin-top:18px; display:flex; gap:8px; align-items:center;">
+                <form asp-action="AddToCart" method="post">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button class="btn btn-outline">Add to Cart</button>
+                </form>
+
+                <form asp-action="Checkout" method="get">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button class="btn btn-primary">Buy Now</button>
+                </form>
+
+                <a class="btn" href="/Store">Back to Store</a>
+            </div>
+        </div>
+    </div>
+</div>

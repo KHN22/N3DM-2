@@ -1,0 +1,12 @@
+@model Marketplace.Models.Order
+@{
+    ViewData["Title"] = "Payment Success";
+}
+
+<div class="container" style="padding-top:28px;">
+    <h1>Payment Successful</h1>
+    <p>Thank you — your order <strong>@Model.Id</strong> has been placed.</p>
+    <p>Total: <strong>$@Model.Total.ToString("F2")</strong></p>
+    <a class="btn btn-primary" href="/Store">Continue Shopping</a>
+</div>
+

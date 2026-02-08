@@ -7,6 +7,25 @@
       "type": "process",
       "args": [
         "build",
+        "${workspaceFolder}/N3DMMarket.csproj"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
         "${workspaceFolder}"
       ],
       "problemMatcher": "$msCompile",

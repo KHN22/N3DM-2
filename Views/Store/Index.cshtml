@@ -45,15 +45,17 @@
             @foreach (var product in Model)
             {
                 <div class="product-card">
-                    <div class="product-thumb">
-                        @if (product.IsNew)
-                        {
-                            <span class="badge badge-primary product-badge">New</span>
-                        }
-                        3D Preview
-                    </div>
+                    <a class="product-thumb-link" href="/Store/Details/@product.Id">
+                        <div class="product-thumb">
+                            @if (product.IsNew)
+                            {
+                                <span class="badge badge-primary product-badge">New</span>
+                            }
+                            3D Preview
+                        </div>
+                    </a>
                     <div class="product-info">
-                        <h3>@product.Title</h3>
+                        <h3><a href="/Store/Details/@product.Id">@product.Title</a></h3>
                         <div class="product-meta">
                             <span class="product-price">$@product.Price.ToString("F2")</span>
                             <span class="product-seller">by @product.Seller</span>

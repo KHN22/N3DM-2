@@ -1,0 +1,30 @@
+@model List<Marketplace.Models.CartItem>
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container" style="padding-top:28px;">
+    <h1>Checkout</h1>
+    <p>Confirm your items and provide an email to receive a receipt.</p>
+
+    <table class="table">
+        <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Subtotal</th></tr></thead>
+        <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>$@item.Price.ToString("F2")</td>
+                <td>@item.Quantity</td>
+                <td>$@(item.Price * item.Quantity).ToString("F2")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <form asp-action="CheckoutConfirm" method="post">
+        <label>Email (optional): <input type="email" name="customerEmail" /></label>
+        <button class="btn btn-primary">Confirm and Pay</button>
+    </form>
+</div>
+

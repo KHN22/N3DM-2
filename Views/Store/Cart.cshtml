@@ -1,0 +1,42 @@
+@model List<Marketplace.Models.CartItem>
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<div class="container" style="padding-top:28px;">
+    <h1>Your Cart</h1>
+    @if (Model == null || Model.Count == 0)
+    {
+        <p>Your cart is empty. <a href="/Store">Continue shopping</a></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th></th></tr></thead>
+            <tbody>
+            @foreach(var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>$@item.Price.ToString("F2")</td>
+                    <td>@item.Quantity</td>
+                    <td>
+                        <form asp-action="RemoveFromCart" method="post" style="display:inline">
+                            <input type="hidden" name="id" value="@item.ProductId" />
+                            <button class="btn btn-sm">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        <div style="margin-top:12px;">
+            <form asp-action="CheckoutConfirm" method="post" style="display:inline-block; margin-right:8px;">
+                <label>Email (optional): <input type="email" name="customerEmail" /></label>
+                <button class="btn btn-primary">Place Order</button>
+            </form>
+            <a class="btn" href="/Store">Continue shopping</a>
+        </div>
+    }
+</div>

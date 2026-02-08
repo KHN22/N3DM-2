@@ -1,0 +1,100 @@
+[
+  {
+    "Id": "342640b1-7472-4eb2-affe-36585aa6647d",
+    "Items": [
+      {
+        "ProductId": 1,
+        "Title": "Sakura VTuber Avatar",
+        "Price": 24.99,
+        "Quantity": 2
+      }
+    ],
+    "Total": 49.98,
+    "CreatedAt": "2026-02-08T17:33:18.7288689Z",
+    "CustomerEmail": null
+  },
+  {
+    "Id": "1a0abf9b-1ed7-4b19-a82f-e172c2f7151d",
+    "Items": [
+      {
+        "ProductId": 1,
+        "Title": "Sakura VTuber Avatar",
+        "Price": 24.99,
+        "Quantity": 1
+      }
+    ],
+    "Total": 24.99,
+    "CreatedAt": "2026-02-08T17:33:45.2547398Z",
+    "CustomerEmail": null
+  },
+  {
+    "Id": "cc827d3a-a50d-446b-98d3-3bd54f403f8e",
+    "Items": [
+      {
+        "ProductId": 1,
+        "Title": "Sakura VTuber Avatar",
+        "Price": 24.99,
+        "Quantity": 3
+      }
+    ],
+    "Total": 74.97,
+    "CreatedAt": "2026-02-08T17:34:54.0445681Z",
+    "CustomerEmail": null
+  },
+  {
+    "Id": "ed13cd29-265d-49e9-a1c1-33280e4fced1",
+    "Items": [
+      {
+        "ProductId": 1,
+        "Title": "Sakura VTuber Avatar",
+        "Price": 24.99,
+        "Quantity": 1
+      }
+    ],
+    "Total": 24.99,
+    "CreatedAt": "2026-02-08T17:46:48.2204715Z",
+    "CustomerEmail": null
+  },
+  {
+    "Id": "f8463ab8-5f38-4da7-ad38-7ecb5e74df85",
+    "Items": [
+      {
+        "ProductId": 1,
+        "Title": "Sakura VTuber Avatar",
+        "Price": 24.99,
+        "Quantity": 1
+      }
+    ],
+    "Total": 24.99,
+    "CreatedAt": "2026-02-08T17:47:27.9165082Z",
+    "CustomerEmail": null
+  },
+  {
+    "Id": "f8deb87f-8278-4439-af92-944afe8b5cdb",
+    "Items": [
+      {
+        "ProductId": 2,
+        "Title": "Mechanical Dragon - Print Ready",
+        "Price": 12.50,
+        "Quantity": 1
+      }
+    ],
+    "Total": 12.50,
+    "CreatedAt": "2026-02-08T17:57:43.2491184Z",
+    "CustomerEmail": null
+  },
+  {
+    "Id": "c2d21b10-7a09-4e74-82c2-cfd2b2077147",
+    "Items": [
+      {
+        "ProductId": 1,
+        "Title": "Sakura VTuber Avatar",
+        "Price": 24.99,
+        "Quantity": 1
+      }
+    ],
+    "Total": 24.99,
+    "CreatedAt": "2026-02-08T18:18:08.4768092Z",
+    "CustomerEmail": null
+  }
+]
