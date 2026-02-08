@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Confirm Your Email";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+
+        <div class="email-notice">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+            </svg>
+            <h3>Check your inbox</h3>
+            <p>
+                We've sent a confirmation link to <strong>you@example.com</strong>.
+                Click the link in the email to verify your account and get started.
+            </p>
+        </div>
+
+        <div style="margin-top:24px; text-align:center; display:flex; flex-direction:column; gap:12px;">
+            <button class="btn btn-secondary" style="width:100%;">Resend Email</button>
+            <a href="@Url.Action("Login", "Account")" style="font-size:0.875rem;">
+                Back to Sign In
+            </a>
+        </div>
+    </div>
+</div>

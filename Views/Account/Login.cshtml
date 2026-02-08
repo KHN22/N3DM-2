@@ -1,0 +1,54 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Sign In";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+
+        @* Brand *@
+        <div class="auth-brand">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0022 16z" />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+            </svg>
+            ModelVault
+        </div>
+
+        <h1>Welcome back</h1>
+        <p class="auth-subtitle">Sign in to your account to continue</p>
+
+        <form class="auth-form" asp-action="Login" asp-controller="Account" method="post">
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input class="form-input" type="email" id="email" name="Email"
+                       placeholder="you@example.com" required />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-input" type="password" id="password" name="Password"
+                       placeholder="Enter your password" required />
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <label style="display:flex; align-items:center; gap:6px; font-size:0.875rem; color:var(--text-secondary); cursor:pointer;">
+                    <input type="checkbox" name="RememberMe" value="true" />
+                    Remember me
+                </label>
+                <a asp-action="ForgotPassword" asp-controller="Account" style="font-size:0.875rem;">Forgot password?</a>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Sign In</button>
+        </form>
+
+        <p class="auth-footer">
+            Don't have an account?
+            <a href="@Url.Action("Register", "Account")">Create one</a>
+        </p>
+    </div>
+</div>

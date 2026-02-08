@@ -1,0 +1,139 @@
+@model List<SellerApprovalRow>
+@{
+    ViewData["Title"] = "Seller Approvals";
+    ViewData["ActivePage"] = "Admin";
+    ViewData["AdminPage"] = "Sellers";
+    Layout = "_AdminLayout";
+}
+
+<h1>Seller Approval Queue</h1>
+<p class="page-desc">Review and approve pending seller applications</p>
+
+@* ── Quick Stats ── *@
+<div class="stats-grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:28px;">
+    <div class="stat-card">
+        <span class="stat-label">Pending</span>
+        <span class="stat-value" style="color:var(--accent-warning);">7</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Approved This Month</span>
+        <span class="stat-value" style="color:var(--accent-success);">23</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Rejected This Month</span>
+        <span class="stat-value" style="color:var(--accent-danger);">3</span>
+    </div>
+</div>
+
+@* ── Approvals Table ── *@
+<div class="card">
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Applicant</th>
+                    <th>Email</th>
+                    <th>Applied</th>
+                    <th>Status</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    @foreach (var seller in Model)
+                    {
+                        <tr>
+                            <td style="font-family:var(--font-mono); font-size:0.8125rem;">#@seller.Id</td>
+                            <td style="color:var(--text-primary); font-weight:500;">@seller.FullName</td>
+                            <td>@seller.Email</td>
+                            <td>@seller.AppliedDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @if (seller.Status == "Pending")
+                                {
+                                    <span class="badge badge-warning">Pending</span>
+                                }
+                                else if (seller.Status == "Approved")
+                                {
+                                    <span class="badge badge-success">Approved</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">Rejected</span>
+                                }
+                            </td>
+                            <td style="text-align:right; display:flex; gap:6px; justify-content:flex-end;">
+                                @if (seller.Status == "Pending")
+                                {
+                                    <button class="btn btn-success btn-sm">Approve</button>
+                                    <button class="btn btn-danger btn-sm">Reject</button>
+                                }
+                                else
+                                {
+                                    <span style="font-size:0.8125rem; color:var(--text-muted);">--</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#10</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Sam Okafor</td>
+                        <td>sam@example.com</td>
+                        <td>Feb 05, 2026</td>
+                        <td><span class="badge badge-warning">Pending</span></td>
+                        <td style="text-align:right; display:flex; gap:6px; justify-content:flex-end;">
+                            <button class="btn btn-success btn-sm">Approve</button>
+                            <button class="btn btn-danger btn-sm">Reject</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#11</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Lena Kovic</td>
+                        <td>lena@example.com</td>
+                        <td>Feb 03, 2026</td>
+                        <td><span class="badge badge-warning">Pending</span></td>
+                        <td style="text-align:right; display:flex; gap:6px; justify-content:flex-end;">
+                            <button class="btn btn-success btn-sm">Approve</button>
+                            <button class="btn btn-danger btn-sm">Reject</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#12</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Raj Patel</td>
+                        <td>raj@example.com</td>
+                        <td>Jan 30, 2026</td>
+                        <td><span class="badge badge-warning">Pending</span></td>
+                        <td style="text-align:right; display:flex; gap:6px; justify-content:flex-end;">
+                            <button class="btn btn-success btn-sm">Approve</button>
+                            <button class="btn btn-danger btn-sm">Reject</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#8</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Marcus Rivera</td>
+                        <td>marcus@example.com</td>
+                        <td>Jan 22, 2026</td>
+                        <td><span class="badge badge-success">Approved</span></td>
+                        <td style="text-align:right;">
+                            <span style="font-size:0.8125rem; color:var(--text-muted);">--</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#6</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Tom Baker</td>
+                        <td>tom@example.com</td>
+                        <td>Jan 15, 2026</td>
+                        <td><span class="badge badge-danger">Rejected</span></td>
+                        <td style="text-align:right;">
+                            <span style="font-size:0.8125rem; color:var(--text-muted);">--</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

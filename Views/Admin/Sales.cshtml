@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Sales Overview";
+    ViewData["ActivePage"] = "Admin";
+    ViewData["AdminPage"] = "Sales";
+    Layout = "_AdminLayout";
+}
+
+<h1>Sales Overview</h1>
+<p class="page-desc">Track revenue, transactions, and marketplace performance</p>
+
+@* ── Stats ── *@
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-label">Total Revenue</span>
+        <span class="stat-value">$142,580</span>
+        <span class="stat-change positive">+18% vs last year</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Transactions</span>
+        <span class="stat-value">3,412</span>
+        <span class="stat-change positive">+9% vs last year</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Avg. Order Value</span>
+        <span class="stat-value">$41.78</span>
+        <span class="stat-change positive">+5%</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Refund Rate</span>
+        <span class="stat-value">2.1%</span>
+        <span class="stat-change negative">+0.3%</span>
+    </div>
+</div>
+
+@* ── Revenue Chart ── *@
+<div class="card" style="margin-bottom:32px;">
+    <div class="card-body">
+        <h2 style="font-size:1.125rem; font-weight:600; margin-bottom:16px;">Revenue by Month</h2>
+        <div class="bar-chart-mock">
+            <div class="bar" style="height:35%;"></div>
+            <div class="bar" style="height:42%;"></div>
+            <div class="bar" style="height:38%;"></div>
+            <div class="bar" style="height:55%;"></div>
+            <div class="bar" style="height:48%;"></div>
+            <div class="bar" style="height:62%;"></div>
+            <div class="bar" style="height:58%;"></div>
+            <div class="bar" style="height:75%;"></div>
+            <div class="bar" style="height:70%;"></div>
+            <div class="bar" style="height:88%;"></div>
+            <div class="bar" style="height:92%;"></div>
+            <div class="bar" style="height:100%;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 20px 0; font-size:0.75rem; color:var(--text-muted);">
+            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+            <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+        </div>
+    </div>
+</div>
+
+@* ── Top Selling Products ── *@
+<div class="card">
+    <div class="card-body">
+        <h2 style="font-size:1.125rem; font-weight:600; margin-bottom:16px;">Top Selling Products</h2>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Seller</th>
+                        <th>Units Sold</th>
+                        <th>Revenue</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Anime Girl - Full Rig</td>
+                        <td>RigMaster</td>
+                        <td>342</td>
+                        <td style="font-weight:600; color:var(--text-primary);">$15,390</td>
+                        <td><span class="badge badge-primary">VTuber</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Cyberpunk Room Environment</td>
+                        <td>SceneForge</td>
+                        <td>287</td>
+                        <td style="font-weight:600; color:var(--text-primary);">$11,193</td>
+                        <td><span class="badge badge-primary">Environment</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Sakura VTuber Avatar</td>
+                        <td>ArtistPro</td>
+                        <td>256</td>
+                        <td style="font-weight:600; color:var(--text-primary);">$6,397</td>
+                        <td><span class="badge badge-primary">VTuber</span></td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Mechanical Dragon</td>
+                        <td>MakerStudio</td>
+                        <td>198</td>
+                        <td style="font-weight:600; color:var(--text-primary);">$2,475</td>
+                        <td><span class="badge badge-primary">3D Print</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

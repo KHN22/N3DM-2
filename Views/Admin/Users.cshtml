@@ -1,0 +1,134 @@
+@model List<AdminUserRow>
+@{
+    ViewData["Title"] = "User Management";
+    ViewData["ActivePage"] = "Admin";
+    ViewData["AdminPage"] = "Users";
+    Layout = "_AdminLayout";
+}
+
+<h1>User Management</h1>
+<p class="page-desc">View and manage all registered users on the platform</p>
+
+@* ── Toolbar ── *@
+<div class="store-toolbar" style="margin-bottom:20px;">
+    <div class="search-box">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input class="form-input" type="text" placeholder="Search users..." />
+    </div>
+    <div class="store-filters">
+        <select class="form-select" style="width:auto;">
+            <option>All Roles</option>
+            <option>Buyer</option>
+            <option>Seller</option>
+            <option>Admin</option>
+        </select>
+        <select class="form-select" style="width:auto;">
+            <option>All Statuses</option>
+            <option>Active</option>
+            <option>Pending</option>
+            <option>Suspended</option>
+        </select>
+    </div>
+</div>
+
+@* ── Users Table ── *@
+<div class="card">
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td style="font-family:var(--font-mono); font-size:0.8125rem;">#@user.Id</td>
+                            <td style="color:var(--text-primary); font-weight:500;">@user.FullName</td>
+                            <td>@user.Email</td>
+                            <td><span class="badge badge-primary">@user.Role</span></td>
+                            <td>
+                                @if (user.Status == "Active")
+                                {
+                                    <span class="badge badge-success">Active</span>
+                                }
+                                else if (user.Status == "Pending")
+                                {
+                                    <span class="badge badge-warning">Pending</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">Suspended</span>
+                                }
+                            </td>
+                            <td>@user.JoinedDate.ToString("MMM dd, yyyy")</td>
+                            <td style="text-align:right;">
+                                <button class="btn btn-ghost btn-sm">Edit</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#1</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Alice Chen</td>
+                        <td>alice@example.com</td>
+                        <td><span class="badge badge-primary">Buyer</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>Feb 02, 2026</td>
+                        <td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#2</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Marcus Rivera</td>
+                        <td>marcus@example.com</td>
+                        <td><span class="badge badge-primary">Seller</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>Jan 28, 2026</td>
+                        <td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#3</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Sam Okafor</td>
+                        <td>sam@example.com</td>
+                        <td><span class="badge badge-warning">Seller</span></td>
+                        <td><span class="badge badge-warning">Pending</span></td>
+                        <td>Jan 18, 2026</td>
+                        <td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#4</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Yuki Tanaka</td>
+                        <td>yuki@example.com</td>
+                        <td><span class="badge badge-primary">Buyer</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>Jan 20, 2026</td>
+                        <td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-mono); font-size:0.8125rem;">#5</td>
+                        <td style="color:var(--text-primary); font-weight:500;">Luna Park</td>
+                        <td>luna@example.com</td>
+                        <td><span class="badge badge-neutral">Admin</span></td>
+                        <td><span class="badge badge-success">Active</span></td>
+                        <td>Dec 05, 2025</td>
+                        <td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

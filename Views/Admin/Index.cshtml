@@ -1,0 +1,129 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    ViewData["ActivePage"] = "Admin";
+    ViewData["AdminPage"] = "Overview";
+    Layout = "_AdminLayout";
+}
+
+<h1>Dashboard Overview</h1>
+<p class="page-desc">Monitor platform activity and key metrics</p>
+
+@* ── Stats Grid ── *@
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-label">Total Users</span>
+        <span class="stat-value">@(Model?.TotalUsers > 0 ? Model.TotalUsers.ToString("N0") : "1,284")</span>
+        <span class="stat-change positive">+12% this month</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Active Sellers</span>
+        <span class="stat-value">@(Model?.TotalSellers > 0 ? Model.TotalSellers.ToString("N0") : "156")</span>
+        <span class="stat-change positive">+8% this month</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Total Products</span>
+        <span class="stat-value">@(Model?.TotalProducts > 0 ? Model.TotalProducts.ToString("N0") : "2,847")</span>
+        <span class="stat-change positive">+23% this month</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Revenue (MTD)</span>
+        <span class="stat-value">@(Model?.TotalRevenue > 0 ? "$" + Model.TotalRevenue.ToString("N0") : "$48,320")</span>
+        <span class="stat-change positive">+18% this month</span>
+    </div>
+</div>
+
+@* ── Monthly Sales Chart ── *@
+<div class="card" style="margin-bottom:32px;">
+    <div class="card-body">
+        <h2 style="font-size:1.125rem; font-weight:600; margin-bottom:16px;">Monthly Revenue</h2>
+        <div class="bar-chart-mock">
+            <div class="bar" style="height:40%;"></div>
+            <div class="bar" style="height:55%;"></div>
+            <div class="bar" style="height:45%;"></div>
+            <div class="bar" style="height:65%;"></div>
+            <div class="bar" style="height:50%;"></div>
+            <div class="bar" style="height:72%;"></div>
+            <div class="bar" style="height:60%;"></div>
+            <div class="bar" style="height:80%;"></div>
+            <div class="bar" style="height:68%;"></div>
+            <div class="bar" style="height:90%;"></div>
+            <div class="bar" style="height:85%;"></div>
+            <div class="bar" style="height:100%;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 20px 0; font-size:0.75rem; color:var(--text-muted);">
+            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+            <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+        </div>
+    </div>
+</div>
+
+@* ── Recent Users Table ── *@
+<div class="card">
+    <div class="card-body">
+        <div class="admin-table-header">
+            <h2>Recent Users</h2>
+            <a class="btn btn-ghost btn-sm" href="@Url.Action("Users", "Admin")">View all</a>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model?.RecentUsers != null && Model.RecentUsers.Count > 0)
+                    {
+                        @foreach (var user in Model.RecentUsers)
+                        {
+                            <tr>
+                                <td style="color:var(--text-primary); font-weight:500;">@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td><span class="badge badge-primary">@user.Role</span></td>
+                                <td><span class="badge badge-success">@user.Status</span></td>
+                                <td>@user.JoinedDate.ToString("MMM dd, yyyy")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td style="color:var(--text-primary); font-weight:500;">Alice Chen</td>
+                            <td>alice@example.com</td>
+                            <td><span class="badge badge-primary">Buyer</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td>Feb 02, 2026</td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-primary); font-weight:500;">Marcus Rivera</td>
+                            <td>marcus@example.com</td>
+                            <td><span class="badge badge-primary">Seller</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td>Jan 28, 2026</td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-primary); font-weight:500;">Yuki Tanaka</td>
+                            <td>yuki@example.com</td>
+                            <td><span class="badge badge-primary">Buyer</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td>Jan 20, 2026</td>
+                        </tr>
+                        <tr>
+                            <td style="color:var(--text-primary); font-weight:500;">Sam Okafor</td>
+                            <td>sam@example.com</td>
+                            <td><span class="badge badge-warning">Seller</span></td>
+                            <td><span class="badge badge-warning">Pending</span></td>
+                            <td>Jan 18, 2026</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

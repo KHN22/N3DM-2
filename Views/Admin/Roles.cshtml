@@ -1,0 +1,101 @@
+@{
+    ViewData["Title"] = "Role Management";
+    ViewData["ActivePage"] = "Admin";
+    ViewData["AdminPage"] = "Roles";
+    Layout = "_AdminLayout";
+}
+
+<h1>Role Management</h1>
+<p class="page-desc">Assign administrative roles to platform users. Superadmin can promote users to Admin.</p>
+
+@* ── Role Explanation ── *@
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;">
+    <div class="card">
+        <div class="card-body">
+            <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--text-primary);">Buyer</h3>
+            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6;">
+                Can browse, purchase, and download 3D models. Access to purchase history and profile settings.
+            </p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--text-primary);">Seller</h3>
+            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6;">
+                All Buyer permissions plus the ability to upload, manage, and sell 3D models on the marketplace.
+            </p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--accent-primary);">Admin</h3>
+            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6;">
+                Full dashboard access: manage users, approve sellers, view sales data, and assign roles.
+            </p>
+        </div>
+    </div>
+</div>
+
+@* ── Role Assignment Table ── *@
+<div class="card">
+    <div class="card-body">
+        <div class="admin-table-header">
+            <h2>Assign Roles</h2>
+            <span class="badge badge-primary">Superadmin View</span>
+        </div>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Current Role</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Luna Park</td>
+                        <td>luna@example.com</td>
+                        <td><span class="badge badge-neutral">Admin</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn btn-danger btn-sm">Revoke Admin</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Marcus Rivera</td>
+                        <td>marcus@example.com</td>
+                        <td><span class="badge badge-primary">Seller</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn btn-primary btn-sm">Promote to Admin</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Alice Chen</td>
+                        <td>alice@example.com</td>
+                        <td><span class="badge badge-primary">Buyer</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn btn-primary btn-sm">Promote to Admin</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Yuki Tanaka</td>
+                        <td>yuki@example.com</td>
+                        <td><span class="badge badge-primary">Buyer</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn btn-primary btn-sm">Promote to Admin</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--text-primary); font-weight:500;">Raj Patel</td>
+                        <td>raj@example.com</td>
+                        <td><span class="badge badge-primary">Seller</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn btn-primary btn-sm">Promote to Admin</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
