@@ -110,5 +110,19 @@
     "Total": 24.99,
     "CreatedAt": "2026-02-08T18:23:46.5609292Z",
     "CustomerEmail": null
+  },
+  {
+    "Id": "59522e99-cc21-43ae-ab5f-9257bb7daa93",
+    "Items": [
+      {
+        "ProductId": 1,
+        "Title": "Sakura VTuber Avatar",
+        "Price": 24.99,
+        "Quantity": 1
+      }
+    ],
+    "Total": 24.99,
+    "CreatedAt": "2026-02-09T06:48:51.9286422Z",
+    "CustomerEmail": null
   }
 ]

@@ -1,23 +1,44 @@
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.Models;
+using Marketplace.Lib;
 
 namespace Marketplace.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly UsersRepository _usersRepo;
+        private readonly IWebHostEnvironment _env;
+
+        public AccountController(IWebHostEnvironment env)
+        {
+            _env = env;
+            _usersRepo = new UsersRepository(env.ContentRootPath);
+        }
+
         // GET: /Account/Login
         public IActionResult Login()
         {
             return View(new LoginViewModel());
         }
 
-        // POST: /Account/Login  (UI-only, no real auth)
+        // POST: /Account/Login
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
-            // TODO: Replace with real authentication logic
-            // For prototype, redirect to Home on submit
-            return RedirectToAction("Index", "Home");
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var users = _usersRepo.LoadAll();
+            var user = users.FirstOrDefault(u => u.Email.Equals(model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase)
+                                                && u.Password == (model.Password ?? string.Empty));
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid email or password");
+                return View(model);
+            }
+
+            HttpContext.Session.SetString("CurrentUserEmail", user.Email);
+            return RedirectToAction("Index", "Profile");
         }
 
         // GET: /Account/Register
@@ -26,13 +47,42 @@ namespace Marketplace.Controllers
             return View(new RegisterViewModel());
         }
 
-        // POST: /Account/Register  (UI-only, no real auth)
+        // POST: /Account/Register
         [HttpPost]
         public IActionResult Register(RegisterViewModel model)
         {
-            // TODO: Replace with real registration logic
-            // For prototype, redirect to email confirmation page
-            return RedirectToAction("EmailConfirmation");
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (model.Password != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("ConfirmPassword", "Passwords do not match");
+                return View(model);
+            }
+
+            var users = _usersRepo.LoadAll();
+            if (users.Any(u => u.Email.Equals(model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase)))
+            {
+                ModelState.AddModelError("Email", "Email already registered");
+                return View(model);
+            }
+
+            var user = new User
+            {
+                FullName = model.FullName ?? string.Empty,
+                Email = model.Email ?? string.Empty,
+                Password = model.Password ?? string.Empty,
+                Role = model.Role ?? "Buyer",
+                Bio = string.Empty,
+                SellerStatus = model.Role == "Seller" ? "Pending" : string.Empty,
+                AvatarInitials = GetInitials(model.FullName),
+                JoinedDate = DateTime.UtcNow
+            };
+
+            _usersRepo.Save(user);
+            HttpContext.Session.SetString("CurrentUserEmail", user.Email);
+
+            return RedirectToAction("Index", "Profile");
         }
 
         // GET: /Account/EmailConfirmation
@@ -54,12 +104,10 @@ namespace Marketplace.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // In a real app: verify user exists, create a secure token and send email.
-            // For this prototype we create a demo token and show the reset link in the confirmation view.
             var token = System.Guid.NewGuid().ToString();
             var resetLink = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
 
-            TempData["ResetLink"] = resetLink; // shown on confirmation page for testing
+            TempData["ResetLink"] = resetLink;
 
             return RedirectToAction("ForgotPasswordConfirmation");
         }
@@ -88,14 +136,27 @@ namespace Marketplace.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // In a real app: verify token, update user's password securely.
-            // For prototype we assume success.
             return RedirectToAction("ResetPasswordConfirmation");
         }
 
         public IActionResult ResetPasswordConfirmation()
         {
             return View();
+        }
+
+        // GET: /Account/Logout
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("CurrentUserEmail");
+            return RedirectToAction("Index", "Home");
+        }
+
+        private static string GetInitials(string? fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName)) return "U";
+            var parts = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 1) return parts[0].Substring(0, 1).ToUpperInvariant();
+            return (parts[0].Substring(0, 1) + parts[^1].Substring(0, 1)).ToUpperInvariant();
         }
     }
 }

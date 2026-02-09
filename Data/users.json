@@ -1,0 +1,22 @@
+[
+  {
+    "FullName": "Apiwit",
+    "Email": "apiwit.sai@spumail.net",
+    "Password": "123456789",
+    "Role": "Buyer",
+    "Bio": "",
+    "SellerStatus": "",
+    "AvatarInitials": "A",
+    "JoinedDate": "2026-02-09T06:51:56.4579218Z"
+  },
+  {
+    "FullName": "SS",
+    "Email": "khing@gmail.com",
+    "Password": "12345678",
+    "Role": "Buyer",
+    "Bio": "",
+    "SellerStatus": "",
+    "AvatarInitials": "S",
+    "JoinedDate": "2026-02-09T07:02:20.2184961Z"
+  }
+]

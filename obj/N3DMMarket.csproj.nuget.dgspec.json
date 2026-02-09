@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\N3DM-Market\\N3DM\\N3DMMarket.csproj": {}
+    "f:\\66073816\\N3DM-project\\N3DM-2\\N3DMMarket.csproj": {}
   },
   "projects": {
-    "D:\\N3DM-Market\\N3DM\\N3DMMarket.csproj": {
+    "f:\\66073816\\N3DM-project\\N3DM-2\\N3DMMarket.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\N3DM-Market\\N3DM\\N3DMMarket.csproj",
+        "projectUniqueName": "f:\\66073816\\N3DM-project\\N3DM-2\\N3DMMarket.csproj",
         "projectName": "N3DMMarket",
-        "projectPath": "D:\\N3DM-Market\\N3DM\\N3DMMarket.csproj",
-        "packagesPath": "C:\\Users\\Khing\\.nuget\\packages\\",
-        "outputPath": "D:\\N3DM-Market\\N3DM\\obj\\",
+        "projectPath": "f:\\66073816\\N3DM-project\\N3DM-2\\N3DMMarket.csproj",
+        "packagesPath": "C:\\Users\\5-903\\.nuget\\packages\\",
+        "outputPath": "f:\\66073816\\N3DM-project\\N3DM-2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Khing\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\5-903\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
