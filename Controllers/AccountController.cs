@@ -1,18 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.Models;
-using Marketplace.Lib;
+using N3DMMarket.Models.Db;
+using Microsoft.EntityFrameworkCore;
 
 namespace Marketplace.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UsersRepository _usersRepo;
+        private readonly ThreedmContext _context;
         private readonly IWebHostEnvironment _env;
 
-        public AccountController(IWebHostEnvironment env)
+        public AccountController(ThreedmContext context, IWebHostEnvironment env)
         {
+            _context = context;
             _env = env;
-            _usersRepo = new UsersRepository(env.ContentRootPath);
         }
 
         // GET: /Account/Login
@@ -28,9 +29,9 @@ namespace Marketplace.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var users = _usersRepo.LoadAll();
-            var user = users.FirstOrDefault(u => u.Email.Equals(model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase)
-                                                && u.Password == (model.Password ?? string.Empty));
+            var user = _context.Users
+                .FirstOrDefault(u => u.Email.Equals(model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase)
+                                     && u.Password == (model.Password ?? string.Empty));
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password");
@@ -60,26 +61,33 @@ namespace Marketplace.Controllers
                 return View(model);
             }
 
-            var users = _usersRepo.LoadAll();
-            if (users.Any(u => u.Email.Equals(model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase)))
+            if (_context.Users.Any(u => u.Email.Equals(model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase)))
             {
                 ModelState.AddModelError("Email", "Email already registered");
                 return View(model);
             }
+            // Ensure the role exists (create if missing)
+            var roleName = string.IsNullOrWhiteSpace(model.Role) ? "Buyer" : model.Role;
+            var role = _context.Roles.FirstOrDefault(r => r.RoleName == roleName);
+            if (role == null)
+            {
+                role = new Role { RoleName = roleName };
+                _context.Roles.Add(role);
+                _context.SaveChanges();
+            }
 
-            var user = new User
+            var user = new N3DMMarket.Models.Db.User
             {
                 FullName = model.FullName ?? string.Empty,
                 Email = model.Email ?? string.Empty,
                 Password = model.Password ?? string.Empty,
-                Role = model.Role ?? "Buyer",
-                Bio = string.Empty,
-                SellerStatus = model.Role == "Seller" ? "Pending" : string.Empty,
-                AvatarInitials = GetInitials(model.FullName),
-                JoinedDate = DateTime.UtcNow
+                RoleId = role.RoleId,
+                CreatedDate = DateTime.UtcNow,
+                IsActive = true
             };
 
-            _usersRepo.Save(user);
+            _context.Users.Add(user);
+            _context.SaveChanges();
             HttpContext.Session.SetString("CurrentUserEmail", user.Email);
 
             return RedirectToAction("Index", "Profile");

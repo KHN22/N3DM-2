@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "f:\\66073816\\N3DM-project\\N3DM-2\\N3DMMarket.csproj": {}
+    "F:\\66073816\\Newver_Project\\N3DM-2\\N3DMMarket.csproj": {}
   },
   "projects": {
-    "f:\\66073816\\N3DM-project\\N3DM-2\\N3DMMarket.csproj": {
+    "F:\\66073816\\Newver_Project\\N3DM-2\\N3DMMarket.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "f:\\66073816\\N3DM-project\\N3DM-2\\N3DMMarket.csproj",
+        "projectUniqueName": "F:\\66073816\\Newver_Project\\N3DM-2\\N3DMMarket.csproj",
         "projectName": "N3DMMarket",
-        "projectPath": "f:\\66073816\\N3DM-project\\N3DM-2\\N3DMMarket.csproj",
+        "projectPath": "F:\\66073816\\Newver_Project\\N3DM-2\\N3DMMarket.csproj",
         "packagesPath": "C:\\Users\\5-903\\.nuget\\packages\\",
-        "outputPath": "f:\\66073816\\N3DM-project\\N3DM-2\\obj\\",
+        "outputPath": "F:\\66073816\\Newver_Project\\N3DM-2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\5-903\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -43,6 +43,28 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[10.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

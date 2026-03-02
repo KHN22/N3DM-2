@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("N3DMMarket")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39f4a014b527c5f15d2d190abb02cb5c3cda4dcb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd1cca5ce2d98e03b1d4123cf6b5afd2cefd52ca")]
 [assembly: System.Reflection.AssemblyProductAttribute("N3DMMarket")]
 [assembly: System.Reflection.AssemblyTitleAttribute("N3DMMarket")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

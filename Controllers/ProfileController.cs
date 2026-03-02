@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.Models;
-using Marketplace.Lib;
+using N3DMMarket.Models.Db;
+using Microsoft.EntityFrameworkCore;
 
 namespace Marketplace.Controllers
 {
     public class ProfileController : Controller
     {
-        private readonly UsersRepository _usersRepo;
+        private readonly ThreedmContext _context;
 
-        public ProfileController(IWebHostEnvironment env)
+        public ProfileController(ThreedmContext context)
         {
-            _usersRepo = new UsersRepository(env.ContentRootPath);
+            _context = context;
         }
 
         // GET: /Profile
@@ -31,7 +32,7 @@ namespace Marketplace.Controllers
                 return View(profile);
             }
 
-            var user = _usersRepo.LoadAll().FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -41,10 +42,10 @@ namespace Marketplace.Controllers
             {
                 FullName = user.FullName,
                 Email = user.Email,
-                Bio = user.Bio,
-                Role = user.Role,
-                SellerStatus = user.SellerStatus,
-                AvatarInitials = user.AvatarInitials
+                Bio = string.Empty,
+                Role = user.Role?.RoleName ?? string.Empty,
+                SellerStatus = string.Empty,
+                AvatarInitials = "U"
             };
 
             return View(vm);
@@ -57,16 +58,13 @@ namespace Marketplace.Controllers
             var email = HttpContext.Session.GetString("CurrentUserEmail");
             if (string.IsNullOrEmpty(email)) return RedirectToAction("Login", "Account");
 
-            var users = _usersRepo.LoadAll();
-            var user = users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            var user = _context.Users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
             if (user == null) return RedirectToAction("Login", "Account");
 
             user.FullName = model.FullName;
-            user.Bio = model.Bio;
-            user.SellerStatus = model.SellerStatus;
-            user.AvatarInitials = model.AvatarInitials;
-
-            _usersRepo.Save(user);
+            // profile fields that don't exist in DB are left out or you can add columns
+            _context.Users.Update(user);
+            _context.SaveChanges();
 
             return View(model);
         }
