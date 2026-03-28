@@ -25,7 +25,7 @@ public partial class ThreedmContext : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             // Fallback for tools or local runs if DbContext wasn't configured via DI.
-            optionsBuilder.UseSqlServer("Server=5-904-012\\SQLEXPRESSLAB5;Database=THREEDM;User=sa;Password=123456789;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-PHRRGPL\\SQLEXPRESS;Database=CSI402;Integrated Security=True;TrustServerCertificate=True");
         }
     }
 
@@ -57,6 +57,8 @@ public partial class ThreedmContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Users__RoleId__4222D4EF");
         });
+
+        
 
         OnModelCreatingPartial(modelBuilder);
     }

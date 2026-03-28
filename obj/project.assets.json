@@ -3082,19 +3082,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\5-903\\.nuget\\packages\\": {}
+    "C:\\Users\\Khing\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\66073816\\Newver_Project\\N3DM-2\\N3DMMarket.csproj",
+      "projectUniqueName": "D:\\N3DM-Market\\N3DM\\N3DMMarket.csproj",
       "projectName": "N3DMMarket",
-      "projectPath": "F:\\66073816\\Newver_Project\\N3DM-2\\N3DMMarket.csproj",
-      "packagesPath": "C:\\Users\\5-903\\.nuget\\packages\\",
-      "outputPath": "F:\\66073816\\Newver_Project\\N3DM-2\\obj\\",
+      "projectPath": "D:\\N3DM-Market\\N3DM\\N3DMMarket.csproj",
+      "packagesPath": "C:\\Users\\Khing\\.nuget\\packages\\",
+      "outputPath": "D:\\N3DM-Market\\N3DM\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\5-903\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Khing\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -3118,7 +3118,7 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.100"
+      "SdkAnalysisLevel": "10.0.200"
     },
     "frameworks": {
       "net10.0": {
@@ -3164,7 +3164,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
