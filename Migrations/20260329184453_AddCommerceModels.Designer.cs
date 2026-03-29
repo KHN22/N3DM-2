@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using N3DMMarket.Models.Db;
 
@@ -11,9 +12,11 @@ using N3DMMarket.Models.Db;
 namespace N3DMMarket.Migrations
 {
     [DbContext(typeof(ThreedmContext))]
-    partial class ThreedmContextModelSnapshot : ModelSnapshot
+    [Migration("20260329184453_AddCommerceModels")]
+    partial class AddCommerceModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,3 +1,4 @@
+@model Marketplace.Models.RolesPageViewModel
 @{
     ViewData["Title"] = "Role Management";
     ViewData["ActivePage"] = "Admin";
@@ -9,11 +10,11 @@
 <p class="page-desc">Assign administrative roles to platform users. Superadmin can promote users to Admin.</p>
 
 @* ── Role Explanation ── *@
-<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;">
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:16px 0 28px 0;">
     <div class="card">
         <div class="card-body">
             <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--text-primary);">Buyer</h3>
-            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6;">
+            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6; margin:0;">
                 Can browse, purchase, and download 3D models. Access to purchase history and profile settings.
             </p>
         </div>
@@ -21,7 +22,7 @@
     <div class="card">
         <div class="card-body">
             <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--text-primary);">Seller</h3>
-            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6;">
+            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6; margin:0;">
                 All Buyer permissions plus the ability to upload, manage, and sell 3D models on the marketplace.
             </p>
         </div>
@@ -29,7 +30,7 @@
     <div class="card">
         <div class="card-body">
             <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--accent-primary);">Admin</h3>
-            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6;">
+            <p style="font-size:0.8125rem; color:var(--text-secondary); line-height:1.6; margin:0;">
                 Full dashboard access: manage users, approve sellers, view sales data, and assign roles.
             </p>
         </div>
@@ -54,46 +55,55 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Luna Park</td>
-                        <td>luna@example.com</td>
-                        <td><span class="badge badge-neutral">Admin</span></td>
-                        <td style="text-align:right;">
-                            <button class="btn btn-danger btn-sm">Revoke Admin</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Marcus Rivera</td>
-                        <td>marcus@example.com</td>
-                        <td><span class="badge badge-primary">Seller</span></td>
-                        <td style="text-align:right;">
-                            <button class="btn btn-primary btn-sm">Promote to Admin</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Alice Chen</td>
-                        <td>alice@example.com</td>
-                        <td><span class="badge badge-primary">Buyer</span></td>
-                        <td style="text-align:right;">
-                            <button class="btn btn-primary btn-sm">Promote to Admin</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Yuki Tanaka</td>
-                        <td>yuki@example.com</td>
-                        <td><span class="badge badge-primary">Buyer</span></td>
-                        <td style="text-align:right;">
-                            <button class="btn btn-primary btn-sm">Promote to Admin</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Raj Patel</td>
-                        <td>raj@example.com</td>
-                        <td><span class="badge badge-primary">Seller</span></td>
-                        <td style="text-align:right;">
-                            <button class="btn btn-primary btn-sm">Promote to Admin</button>
-                        </td>
-                    </tr>
+                    @if (Model != null && Model.Users != null && Model.Users.Any())
+                    {
+                        foreach (var u in Model.Users)
+                        {
+                            <tr>
+                                <td style="color:var(--text-primary); font-weight:500;">@u.FullName</td>
+                                <td>@u.Email</td>
+                                <td>
+                                    @if (string.Equals(u.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge badge-neutral">@u.Role</span>
+                                    }
+                                    else if (string.Equals(u.Role, "Seller", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="badge badge-primary">@u.Role</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-primary">@u.Role</span>
+                                    }
+                                </td>
+                                <td style="text-align:right;">
+                                    <form method="post" asp-action="UpdateRole" style="display:inline-block; margin:0;">
+                                        <input type="hidden" name="userId" value="@u.Id" />
+                                        <select name="roleId" class="form-select" style="width:auto; display:inline-block; margin-right:8px;">
+                                            @foreach(var r in Model.Roles)
+                                            {
+                                                if (r.RoleName == u.Role)
+                                                {
+                                                    <option value="@r.RoleId" selected>@r.RoleName</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@r.RoleId">@r.RoleName</option>
+                                                }
+                                            }
+                                        </select>
+                                        <button class="btn btn-primary btn-sm">Save</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">No users found.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

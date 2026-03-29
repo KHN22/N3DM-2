@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc;
 using Marketplace.Models;
 using N3DMMarket.Models.Db;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +9,13 @@ namespace Marketplace.Controllers
     {
         private readonly ThreedmContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(ThreedmContext context, IWebHostEnvironment env)
+        public AccountController(ThreedmContext context, IWebHostEnvironment env, ILogger<AccountController> logger)
         {
             _context = context;
             _env = env;
+            _logger = logger;
         }
 
         // GET: /Account/Login
@@ -29,17 +31,27 @@ namespace Marketplace.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = _context.Users
-                .FirstOrDefault(u => u.Email.Equals(model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase)
-                                     && u.Password == (model.Password ?? string.Empty));
-            if (user == null)
+            try
             {
-                ModelState.AddModelError(string.Empty, "Invalid email or password");
+                var normalizedEmail = (model.Email ?? string.Empty).Trim().ToUpper();
+                var password = model.Password ?? string.Empty;
+                var user = _context.Users
+                    .FirstOrDefault(u => u.Email.ToUpper() == normalizedEmail && u.Password == password);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid email or password");
+                    return View(model);
+                }
+
+                HttpContext.Session.SetString("CurrentUserEmail", user.Email);
+                return RedirectToAction("Index", "Profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Login failed for {Email}", model.Email);
+                ModelState.AddModelError(string.Empty, "An error occurred while logging in. " + ex.Message);
                 return View(model);
             }
-
-            HttpContext.Session.SetString("CurrentUserEmail", user.Email);
-            return RedirectToAction("Index", "Profile");
         }
 
         // GET: /Account/Register
@@ -48,50 +60,7 @@ namespace Marketplace.Controllers
             return View(new RegisterViewModel());
         }
 
-        // POST: /Account/Register
-        [HttpPost]
-        public IActionResult Register(RegisterViewModel model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            if (model.Password != model.ConfirmPassword)
-            {
-                ModelState.AddModelError("ConfirmPassword", "Passwords do not match");
-                return View(model);
-            }
-
-            if (_context.Users.Any(u => u.Email.Equals(model.Email ?? string.Empty, StringComparison.OrdinalIgnoreCase)))
-            {
-                ModelState.AddModelError("Email", "Email already registered");
-                return View(model);
-            }
-            // Ensure the role exists (create if missing)
-            var roleName = string.IsNullOrWhiteSpace(model.Role) ? "Buyer" : model.Role;
-            var role = _context.Roles.FirstOrDefault(r => r.RoleName == roleName);
-            if (role == null)
-            {
-                role = new Role { RoleName = roleName };
-                _context.Roles.Add(role);
-                _context.SaveChanges();
-            }
-
-            var user = new N3DMMarket.Models.Db.User
-            {
-                FullName = model.FullName ?? string.Empty,
-                Email = model.Email ?? string.Empty,
-                Password = model.Password ?? string.Empty,
-                RoleId = role.RoleId,
-                CreatedDate = DateTime.UtcNow,
-                IsActive = true
-            };
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-            HttpContext.Session.SetString("CurrentUserEmail", user.Email);
-
-            return RedirectToAction("Index", "Profile");
-        }
+        
 
         // GET: /Account/EmailConfirmation
         public IActionResult EmailConfirmation()
@@ -139,32 +108,71 @@ namespace Marketplace.Controllers
 
         // POST: /Account/ResetPassword
         [HttpPost]
-        public IActionResult ResetPassword(ResetPasswordViewModel model)
+        public IActionResult Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            return RedirectToAction("ResetPasswordConfirmation");
-        }
+            if (model.Password != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("ConfirmPassword", "Passwords do not match");
+                return View(model);
+            }
 
-        public IActionResult ResetPasswordConfirmation()
-        {
-            return View();
+            try
+            {
+                var normalizedEmail = (model.Email ?? string.Empty).Trim().ToUpper();
+                if (_context.Users.Any(u => u.Email.ToUpper() == normalizedEmail))
+                {
+                    ModelState.AddModelError("Email", "Email already registered");
+                    return View(model);
+                }
+
+                // Ensure the role exists (create if missing)
+                var roleName = string.IsNullOrWhiteSpace(model.Role) ? "Customer" : model.Role;
+                var role = _context.Roles.FirstOrDefault(r => r.RoleName == roleName);
+                if (role == null)
+                {
+                    role = new Role { RoleName = roleName };
+                    _context.Roles.Add(role);
+                    _context.SaveChanges();
+                }
+
+                var user = new N3DMMarket.Models.Db.User
+                {
+                    FullName = model.FullName ?? string.Empty,
+                    Email = model.Email ?? string.Empty,
+                    Password = model.Password ?? string.Empty,
+                    RoleId = role.RoleId,
+                    CreatedDate = DateTime.UtcNow,
+                    IsActive = true
+                };
+
+                _context.Users.Add(user);
+                _context.SaveChanges();
+                HttpContext.Session.SetString("CurrentUserEmail", user.Email);
+
+                return RedirectToAction("Index", "Profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Registration failed for {Email}", model.Email);
+                ModelState.AddModelError(string.Empty, "An error occurred while creating the account. " + ex.Message);
+                return View(model);
+            }
         }
 
         // GET: /Account/Logout
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("CurrentUserEmail");
+            try
+            {
+                HttpContext.Session.Remove("CurrentUserEmail");
+                HttpContext.Session.Clear();
+            }
+            catch { }
             return RedirectToAction("Index", "Home");
         }
 
-        private static string GetInitials(string? fullName)
-        {
-            if (string.IsNullOrWhiteSpace(fullName)) return "U";
-            var parts = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 1) return parts[0].Substring(0, 1).ToUpperInvariant();
-            return (parts[0].Substring(0, 1) + parts[^1].Substring(0, 1)).ToUpperInvariant();
-        }
     }
 }

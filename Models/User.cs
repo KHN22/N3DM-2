@@ -7,7 +7,7 @@ namespace Marketplace.Models
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty; // prototype: plain text
-        public string Role { get; set; } = "Buyer";
+        public string Role { get; set; } = "Customer";
         public string Bio { get; set; } = string.Empty;
         public string SellerStatus { get; set; } = string.Empty;
         public string AvatarInitials { get; set; } = "U";

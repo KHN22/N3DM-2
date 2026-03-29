@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using N3DMMarket.Models.Db;
+using N3DMMarket.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.WebHost.ConfigureKestrel(options =>
 
 // Add services
 builder.Services.AddControllersWithViews();
+// register role filter factory for attribute usage
+builder.Services.AddScoped<RoleAuthorizeFilter>(sp => Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance<RoleAuthorizeFilter>(sp, ""));
 // Add session support for cart
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -46,5 +49,28 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
+// Seed default roles (Admin, Moderator, Seller, Customer)
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ThreedmContext>();
+    try
+    {
+        var roles = new[] { "Admin", "Moderator", "Seller", "Customer" };
+        foreach (var rn in roles)
+        {
+            if (!context.Roles.Any(r => r.RoleName == rn))
+            {
+                context.Roles.Add(new N3DMMarket.Models.Db.Role { RoleName = rn });
+            }
+        }
+        context.SaveChanges();
+    }
+    catch
+    {
+        // swallowing exceptions here because seeding should not crash the app during startup
+    }
+}
 
 app.Run();

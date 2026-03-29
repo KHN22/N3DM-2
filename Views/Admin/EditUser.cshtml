@@ -1,0 +1,24 @@
+@model Marketplace.Models.EditUserViewModel
+@{
+    ViewData["Title"] = "Edit User";
+    Layout = "_AdminLayout";
+}
+
+<h1>Edit User</h1>
+
+<form asp-action="EditUser" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-row">
+        <label>Full name</label>
+        <input class="form-input" asp-for="FullName" />
+    </div>
+    <div class="form-row">
+        <label>Email</label>
+        <input class="form-input" asp-for="Email" />
+    </div>
+    @* Role changes are managed via Role Management page *@
+    <div style="margin-top:12px;">
+        <button class="btn">Save</button>
+        <a class="btn btn-ghost" href="@Url.Action("Users", "Admin")">Cancel</a>
+    </div>
+</form>

@@ -1,38 +1,54 @@
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.Models;
 using Marketplace.Lib;
+using N3DMMarket.Models.Db;
+using Microsoft.EntityFrameworkCore;
 
 namespace Marketplace.Controllers
 {
     public class StoreController : Controller
     {
-        private readonly OrdersRepository _ordersRepo;
-        private readonly IWebHostEnvironment _env;
-        // In-memory sample products for prototype
-        private static readonly List<ProductViewModel> _products = new()
-        {
-            new ProductViewModel { Id = 1, Title = "Sakura VTuber Avatar", Seller = "ArtistPro", Price = 24.99m, Category = "VTuber", ThumbnailUrl = "", Tags = new List<string>{"VTuber","Rigged","FBX"}, IsNew = true },
-            new ProductViewModel { Id = 2, Title = "Mechanical Dragon - Print Ready", Seller = "MakerStudio", Price = 12.50m, Category = "3D Print", ThumbnailUrl = "", Tags = new List<string>{"3D Print","STL"} },
-            new ProductViewModel { Id = 3, Title = "Cyberpunk Room Environment", Seller = "SceneForge", Price = 39.00m, Category = "Environment", ThumbnailUrl = "", Tags = new List<string>{"Environment","Unity","GLTF"} }
-        };
+        private readonly ThreedmContext _db;
 
-        public StoreController(IWebHostEnvironment env)
+        public StoreController(ThreedmContext db)
         {
-            _env = env;
-            _ordersRepo = new OrdersRepository(env.ContentRootPath);
+            _db = db;
         }
 
         // GET: /Store
         public IActionResult Index()
         {
-            return View(_products);
+            var products = _db.Products
+                .Select(p => new ProductViewModel
+                {
+                    Id = p.ProductId,
+                    Title = p.Title,
+                    Price = p.Price,
+                    Category = p.Category,
+                    ThumbnailUrl = p.ThumbnailUrl,
+                    Seller = string.Empty,
+                    Tags = new List<string>()
+                })
+                .ToList();
+
+            return View(products);
         }
 
         // GET: /Store/Details/1
         public IActionResult Details(int id)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
-            if (product == null) return NotFound();
+            var p = _db.Products.FirstOrDefault(x => x.ProductId == id);
+            if (p == null) return NotFound();
+            var product = new ProductViewModel
+            {
+                Id = p.ProductId,
+                Title = p.Title,
+                Price = p.Price,
+                Category = p.Category,
+                ThumbnailUrl = p.ThumbnailUrl,
+                Seller = string.Empty,
+                Tags = new List<string>()
+            };
             return View(product);
         }
 
@@ -40,8 +56,19 @@ namespace Marketplace.Controllers
         [HttpPost]
         public IActionResult AddToCart(int id)
         {
-            var product = _products.FirstOrDefault(p => p.Id == id);
-            if (product == null) return NotFound();
+            var p = _db.Products.FirstOrDefault(x => x.ProductId == id);
+            if (p == null) return NotFound();
+
+            var product = new ProductViewModel
+            {
+                Id = p.ProductId,
+                Title = p.Title,
+                Price = p.Price,
+                Category = p.Category,
+                ThumbnailUrl = p.ThumbnailUrl,
+                Seller = string.Empty,
+                Tags = new List<string>()
+            };
 
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("cart") ?? new List<CartItem>();
             var existing = cart.FirstOrDefault(c => c.ProductId == id);
@@ -90,26 +117,59 @@ namespace Marketplace.Controllers
             var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("cart") ?? new List<CartItem>();
             if (cart.Count == 0) return RedirectToAction("Index");
 
-            var order = new Order
+            // create DB order
+            var dbOrder = new N3DMMarket.Models.Db.Order
             {
-                Items = cart,
-                CustomerEmail = customerEmail
+                CustomerEmail = customerEmail,
+                TotalAmount = cart.Sum(i => i.Price * i.Quantity),
+                CreatedAt = DateTime.UtcNow,
+                Status = "Completed",
+                PaymentMethod = "Prototype",
+                PaymentStatus = "Completed"
             };
-            _ordersRepo.Save(order);
+
+            foreach (var item in cart)
+            {
+                dbOrder.OrderItems.Add(new N3DMMarket.Models.Db.OrderItem
+                {
+                    ProductId = item.ProductId,
+                    TitleSnapshot = item.Title ?? string.Empty,
+                    PriceSnapshot = item.Price,
+                    Quantity = item.Quantity,
+                    LineTotal = item.Price * item.Quantity
+                });
+            }
+
+            _db.Orders.Add(dbOrder);
+            _db.SaveChanges();
 
             // Clear cart
             HttpContext.Session.Remove("cart");
 
-            return RedirectToAction("Payment", new { id = order.Id });
+            return RedirectToAction("Payment", new { id = dbOrder.OrderId.ToString() });
         }
 
         // GET: /Store/Payment/{orderId}
         public IActionResult Payment(string id)
         {
-            var orders = _ordersRepo.LoadAll();
-            var order = orders.FirstOrDefault(o => o.Id == id);
+            if (!Guid.TryParse(id, out var guid)) return NotFound();
+            var order = _db.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.OrderId == guid);
             if (order == null) return NotFound();
-            return View(order);
+            // map to view model Order (file-based) for existing views
+            var viewOrder = new Marketplace.Models.Order
+            {
+                Id = order.OrderId.ToString(),
+                CreatedAt = order.CreatedAt,
+                CustomerEmail = order.CustomerEmail,
+                Items = order.OrderItems.Select(oi => new Marketplace.Models.CartItem
+                {
+                    ProductId = oi.ProductId,
+                    Title = oi.TitleSnapshot,
+                    Price = oi.PriceSnapshot,
+                    Quantity = oi.Quantity
+                }).ToList()
+            };
+            return View(viewOrder);
         }
 
         // POST: /Store/PaymentProcess
@@ -122,10 +182,23 @@ namespace Marketplace.Controllers
 
         public IActionResult PaymentConfirmation(string id)
         {
-            var orders = _ordersRepo.LoadAll();
-            var order = orders.FirstOrDefault(o => o.Id == id);
+            if (!Guid.TryParse(id, out var guid)) return NotFound();
+            var order = _db.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.OrderId == guid);
             if (order == null) return NotFound();
-            return View(order);
+            var viewOrder = new Marketplace.Models.Order
+            {
+                Id = order.OrderId.ToString(),
+                CreatedAt = order.CreatedAt,
+                CustomerEmail = order.CustomerEmail,
+                Items = order.OrderItems.Select(oi => new Marketplace.Models.CartItem
+                {
+                    ProductId = oi.ProductId,
+                    Title = oi.TitleSnapshot,
+                    Price = oi.PriceSnapshot,
+                    Quantity = oi.Quantity
+                }).ToList()
+            };
+            return View(viewOrder);
         }
     }
 }

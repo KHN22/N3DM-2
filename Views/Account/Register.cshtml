@@ -23,19 +23,24 @@
 
         <form class="auth-form" asp-action="Register" asp-controller="Account" method="post">
 
+            @* validation summary *@
+            <div class="form-group">
+                @Html.ValidationSummary(true, "", new { @class = "validation-summary" })
+            </div>
+
             @* Role Selection *@
             <div class="form-group">
                 <label class="form-label">I want to...</label>
                 <div class="role-selection">
                     <label class="role-option">
-                        <input type="radio" name="Role" value="Buyer" checked />
+                        <input type="radio" name="Role" value="Customer" checked />
                         <div class="role-card">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="9" cy="21" r="1" /><circle cx="20" cy="21" r="1" />
                                 <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
                             </svg>
-                            <span class="role-title">Buy Models</span>
+                            <span class="role-title">Customer</span>
                             <span class="role-desc">Browse and purchase 3D assets</span>
                         </div>
                     </label>

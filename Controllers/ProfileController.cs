@@ -32,7 +32,8 @@ namespace Marketplace.Controllers
                 return View(profile);
             }
 
-            var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            var normalizedEmail = (email ?? string.Empty).Trim().ToUpper();
+            var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Email.ToUpper() == normalizedEmail);
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -58,7 +59,8 @@ namespace Marketplace.Controllers
             var email = HttpContext.Session.GetString("CurrentUserEmail");
             if (string.IsNullOrEmpty(email)) return RedirectToAction("Login", "Account");
 
-            var user = _context.Users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            var normalizedEmail = (email ?? string.Empty).Trim().ToUpper();
+            var user = _context.Users.FirstOrDefault(u => u.Email.ToUpper() == normalizedEmail);
             if (user == null) return RedirectToAction("Login", "Account");
 
             user.FullName = model.FullName;

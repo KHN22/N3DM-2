@@ -17,7 +17,7 @@ namespace Marketplace.Models
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string ConfirmPassword { get; set; } = string.Empty;
-        public string Role { get; set; } = "Buyer";   // "Buyer" or "Seller"
+        public string Role { get; set; } = "Customer";   // "Customer" or "Seller"
     }
 
     public class ForgotPasswordViewModel
@@ -67,7 +67,7 @@ namespace Marketplace.Models
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Bio { get; set; } = string.Empty;
-        public string Role { get; set; } = "Buyer";
+        public string Role { get; set; } = "Customer";
         public string SellerStatus { get; set; } = string.Empty;  // "Pending" | "Approved" | ""
         public string AvatarInitials { get; set; } = "U";
     }
@@ -101,7 +101,7 @@ namespace Marketplace.Models
         public int Id { get; set; }
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string Role { get; set; } = "Buyer";
+        public string Role { get; set; } = "Customer";
         public string Status { get; set; } = "Active";
         public DateTime JoinedDate { get; set; }
     }
@@ -113,5 +113,19 @@ namespace Marketplace.Models
         public string Email { get; set; } = string.Empty;
         public DateTime AppliedDate { get; set; }
         public string Status { get; set; } = "Pending";  // "Pending" | "Approved" | "Rejected"
+    }
+
+    public class EditUserViewModel
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        // Admin should use Role Management page to change roles.
+    }
+
+    public class RolesPageViewModel
+    {
+        public List<N3DMMarket.Models.Db.Role> Roles { get; set; } = new();
+        public List<AdminUserRow> Users { get; set; } = new();
     }
 }
