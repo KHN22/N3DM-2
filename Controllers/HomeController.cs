@@ -9,7 +9,25 @@ namespace Marketplace.Controllers
         // GET: /Home  or  /
         public IActionResult Index()
         {
-            return View();
+            // show latest published products on the homepage
+            var products = _db.Products
+                .Include(p => p.Seller)
+                .Where(p => p.IsPublished)
+                .OrderByDescending(p => p.CreatedAt)
+                .Take(6)
+                .Select(p => new Marketplace.Models.ProductViewModel
+                {
+                    Id = p.ProductId,
+                    Title = p.Title,
+                    Price = p.Price,
+                    Category = p.Category,
+                    ThumbnailUrl = string.IsNullOrEmpty(p.ThumbnailUrl) ? "/images/placeholder-product.png" : p.ThumbnailUrl,
+                    Seller = p.Seller != null ? p.Seller.FullName : string.Empty,
+                    Tags = new List<string>()
+                })
+                .ToList();
+
+            return View(products);
         }
 
         private readonly ThreedmContext _db;

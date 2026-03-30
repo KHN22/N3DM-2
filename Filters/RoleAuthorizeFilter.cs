@@ -22,16 +22,37 @@ public class RoleAuthorizeFilter : IAsyncActionFilter
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var http = context.HttpContext;
-        var email = http.Session.GetString("CurrentUserEmail");
+        string email = null;
+        try
+        {
+            email = http?.Session?.GetString("CurrentUserEmail");
+        }
+        catch
+        {
+            // If session is unavailable, redirect to login to re-establish session
+            context.Result = new RedirectToActionResult("Login", "Account", null);
+            return;
+        }
+
         if (string.IsNullOrEmpty(email))
         {
             context.Result = new RedirectToActionResult("Login", "Account", null);
             return;
         }
 
-        var normalized = email.Trim().ToUpper();
-        var user = _db.Users.Include(u => u.Role).FirstOrDefault(u => u.Email.ToUpper() == normalized);
-        var roleName = user?.Role?.RoleName ?? string.Empty;
+        string roleName = string.Empty;
+        try
+        {
+            var normalized = email.Trim().ToUpper();
+            var user = _db.Users.Include(u => u.Role).FirstOrDefault(u => u.Email.ToUpper() == normalized);
+            roleName = user?.Role?.RoleName ?? string.Empty;
+        }
+        catch
+        {
+            // On DB error, redirect to login to avoid crashing the request pipeline
+            context.Result = new RedirectToActionResult("Login", "Account", null);
+            return;
+        }
 
         // allow if user role is in allowed list
         if (_allowedRoles.Length==0 || _allowedRoles.Contains(roleName, StringComparer.OrdinalIgnoreCase))

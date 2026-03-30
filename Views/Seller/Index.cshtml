@@ -1,0 +1,453 @@
+@model Marketplace.Models.SellerDashboardViewModel
+@{
+    ViewData["Title"] = "Seller Dashboard";
+    ViewData["SellerPage"] = "Dashboard";
+    Layout = "_SellerLayout";
+
+    // Mock data for static preview
+    var dashboard = Model ?? new Marketplace.Models.SellerDashboardViewModel
+    {
+        TotalEarnings = 12458.50m,
+        PendingBalance = 1250.00m,
+        TotalSales = 847,
+        TotalProducts = 24,
+        ActiveProducts = 21,
+        TotalViews = 28540,
+        ConversionRate = 2.97m
+    };
+}
+
+<div class="seller-dashboard">
+    @* ── Page Header ── *@
+    <div class="page-header-flex">
+        <div>
+            <h1>Dashboard</h1>
+            <p class="page-desc">Welcome back! Here is an overview of your store performance.</p>
+        </div>
+        <div class="header-actions">
+            <a href="@Url.Action("Create", "Seller")" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add New Product
+            </a>
+        </div>
+    </div>
+
+    @* ── Stats Grid ── *@
+    <div class="stats-grid seller-stats">
+        <div class="stat-card accent-green">
+            <div class="stat-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                </svg>
+            </div>
+            <div class="stat-data">
+                <span class="stat-label">Total Earnings</span>
+                <span class="stat-value">$@dashboard.TotalEarnings.ToString("N2")</span>
+                <span class="stat-change positive">+18.2% from last month</span>
+            </div>
+        </div>
+
+        <div class="stat-card accent-yellow">
+            <div class="stat-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+            </div>
+            <div class="stat-data">
+                <span class="stat-label">Pending Balance</span>
+                <span class="stat-value">$@dashboard.PendingBalance.ToString("N2")</span>
+                <span class="stat-change neutral">Clears in 7 days</span>
+            </div>
+        </div>
+
+        <div class="stat-card accent-cyan">
+            <div class="stat-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
+            </div>
+            <div class="stat-data">
+                <span class="stat-label">Total Sales</span>
+                <span class="stat-value">@dashboard.TotalSales</span>
+                <span class="stat-change positive">+24 this week</span>
+            </div>
+        </div>
+
+        <div class="stat-card accent-purple">
+            <div class="stat-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <div class="stat-data">
+                <span class="stat-label">Total Views</span>
+                <span class="stat-value">@dashboard.TotalViews.ToString("N0")</span>
+                <span class="stat-change positive">+12.5% from last month</span>
+            </div>
+        </div>
+    </div>
+
+    @* ── Quick Actions ── *@
+    <div class="quick-actions-row">
+        <a href="@Url.Action("Earnings", "Seller")" class="quick-action-card">
+            <div class="qa-icon green">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                    <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+            </div>
+            <div class="qa-info">
+                <span class="qa-title">Request Payout</span>
+                <span class="qa-desc">$1,250.00 available</span>
+            </div>
+            <svg class="qa-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
+        </a>
+
+        <a href="@Url.Action("Products", "Seller")" class="quick-action-card">
+            <div class="qa-icon cyan">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                </svg>
+            </div>
+            <div class="qa-info">
+                <span class="qa-title">Manage Products</span>
+                <span class="qa-desc">@dashboard.ActiveProducts active, @(dashboard.TotalProducts - dashboard.ActiveProducts) drafts</span>
+            </div>
+            <svg class="qa-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
+        </a>
+
+        <a href="@Url.Action("Analytics", "Seller")" class="quick-action-card">
+            <div class="qa-icon purple">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+            </div>
+            <div class="qa-info">
+                <span class="qa-title">View Analytics</span>
+                <span class="qa-desc">@dashboard.ConversionRate% conversion rate</span>
+            </div>
+            <svg class="qa-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
+        </a>
+    </div>
+
+    @* ── Charts Row ── *@
+    <div class="dashboard-charts-row">
+        @* Sales Chart *@
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Sales Overview</h3>
+                <div class="chart-period-tabs">
+                    <button class="period-tab active">7 Days</button>
+                    <button class="period-tab">30 Days</button>
+                    <button class="period-tab">90 Days</button>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div class="line-chart-mock" data-values="120,180,150,220,280,240,320">
+                    <div class="chart-y-axis">
+                        <span>$400</span>
+                        <span>$300</span>
+                        <span>$200</span>
+                        <span>$100</span>
+                        <span>$0</span>
+                    </div>
+                    <div class="chart-area">
+                        <svg viewBox="0 0 700 200" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="salesGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:rgba(0,200,240,0.3);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:rgba(0,200,240,0);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path class="chart-area-fill" d="M0,140 L116,100 L233,120 L350,70 L466,30 L583,50 L700,0 L700,200 L0,200 Z" fill="url(#salesGradient)"/>
+                            <path class="chart-line" d="M0,140 L116,100 L233,120 L350,70 L466,30 L583,50 L700,0" fill="none" stroke="var(--accent-primary)" stroke-width="3"/>
+                            <circle cx="0" cy="140" r="4" fill="var(--accent-primary)"/>
+                            <circle cx="116" cy="100" r="4" fill="var(--accent-primary)"/>
+                            <circle cx="233" cy="120" r="4" fill="var(--accent-primary)"/>
+                            <circle cx="350" cy="70" r="4" fill="var(--accent-primary)"/>
+                            <circle cx="466" cy="30" r="4" fill="var(--accent-primary)"/>
+                            <circle cx="583" cy="50" r="4" fill="var(--accent-primary)"/>
+                            <circle cx="700" cy="0" r="4" fill="var(--accent-primary)"/>
+                        </svg>
+                    </div>
+                    <div class="chart-x-axis">
+                        <span>Mon</span>
+                        <span>Tue</span>
+                        <span>Wed</span>
+                        <span>Thu</span>
+                        <span>Fri</span>
+                        <span>Sat</span>
+                        <span>Sun</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Earnings Breakdown *@
+        <div class="chart-card compact">
+            <div class="chart-header">
+                <h3>Earnings Breakdown</h3>
+            </div>
+            <div class="earnings-breakdown">
+                <div class="earning-item">
+                    <div class="earning-label">
+                        <span class="dot cyan"></span>
+                        Product Sales
+                    </div>
+                    <div class="earning-value">$10,240.00</div>
+                    <div class="earning-bar">
+                        <div class="bar-fill" style="width: 82%"></div>
+                    </div>
+                </div>
+                <div class="earning-item">
+                    <div class="earning-label">
+                        <span class="dot green"></span>
+                        Tips / Donations
+                    </div>
+                    <div class="earning-value">$1,458.50</div>
+                    <div class="earning-bar">
+                        <div class="bar-fill green" style="width: 12%"></div>
+                    </div>
+                </div>
+                <div class="earning-item">
+                    <div class="earning-label">
+                        <span class="dot purple"></span>
+                        Referral Bonus
+                    </div>
+                    <div class="earning-value">$760.00</div>
+                    <div class="earning-bar">
+                        <div class="bar-fill purple" style="width: 6%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="breakdown-total">
+                <span>Total This Month</span>
+                <span class="total-value">$12,458.50</span>
+            </div>
+        </div>
+    </div>
+
+    @* ── Recent Orders Table ── *@
+    <div class="dashboard-section">
+        <div class="section-header-flex">
+            <h2>Recent Orders</h2>
+            <a href="@Url.Action("Orders", "Seller")" class="btn btn-ghost btn-sm">
+                View All Orders
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Buyer</th>
+                            <th>Amount</th>
+                            <th>Your Earnings</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="order-id">#ORD-7842</td>
+                            <td>
+                                <div class="product-cell">
+                                    <div class="product-thumb-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="1.5">
+                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                        </svg>
+                                    </div>
+                                    Cyberpunk City Pack
+                                </div>
+                            </td>
+                            <td>john.doe@email.com</td>
+                            <td class="amount">$49.99</td>
+                            <td class="earnings">$42.49</td>
+                            <td>Mar 28, 2026</td>
+                            <td><span class="badge badge-success">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#ORD-7841</td>
+                            <td>
+                                <div class="product-cell">
+                                    <div class="product-thumb-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="1.5">
+                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                        </svg>
+                                    </div>
+                                    Medieval Castle Kit
+                                </div>
+                            </td>
+                            <td>sarah.m@company.io</td>
+                            <td class="amount">$79.00</td>
+                            <td class="earnings">$67.15</td>
+                            <td>Mar 27, 2026</td>
+                            <td><span class="badge badge-success">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#ORD-7840</td>
+                            <td>
+                                <div class="product-cell">
+                                    <div class="product-thumb-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="1.5">
+                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                        </svg>
+                                    </div>
+                                    Sci-Fi Vehicle Bundle
+                                </div>
+                            </td>
+                            <td>mark.wilson@dev.co</td>
+                            <td class="amount">$129.00</td>
+                            <td class="earnings">$109.65</td>
+                            <td>Mar 26, 2026</td>
+                            <td><span class="badge badge-warning">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td class="order-id">#ORD-7839</td>
+                            <td>
+                                <div class="product-cell">
+                                    <div class="product-thumb-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="1.5">
+                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                        </svg>
+                                    </div>
+                                    Nature Environment
+                                </div>
+                            </td>
+                            <td>emma.j@studio.net</td>
+                            <td class="amount">$34.99</td>
+                            <td class="earnings">$29.74</td>
+                            <td>Mar 25, 2026</td>
+                            <td><span class="badge badge-success">Completed</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @* ── Top Products ── *@
+    <div class="dashboard-section">
+        <div class="section-header-flex">
+            <h2>Top Performing Products</h2>
+            <a href="@Url.Action("Products", "Seller")" class="btn btn-ghost btn-sm">
+                Manage Products
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="top-products-grid">
+            <div class="top-product-card">
+                <div class="tp-rank">#1</div>
+                <div class="tp-thumb">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                    </svg>
+                </div>
+                <div class="tp-info">
+                    <h4>Cyberpunk City Pack</h4>
+                    <p>Characters &amp; Creatures</p>
+                </div>
+                <div class="tp-stats">
+                    <div class="tp-stat">
+                        <span class="tp-stat-value">324</span>
+                        <span class="tp-stat-label">Sales</span>
+                    </div>
+                    <div class="tp-stat">
+                        <span class="tp-stat-value">$16,189</span>
+                        <span class="tp-stat-label">Revenue</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="top-product-card">
+                <div class="tp-rank">#2</div>
+                <div class="tp-thumb">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                    </svg>
+                </div>
+                <div class="tp-info">
+                    <h4>Medieval Castle Kit</h4>
+                    <p>Architecture</p>
+                </div>
+                <div class="tp-stats">
+                    <div class="tp-stat">
+                        <span class="tp-stat-value">186</span>
+                        <span class="tp-stat-label">Sales</span>
+                    </div>
+                    <div class="tp-stat">
+                        <span class="tp-stat-value">$14,694</span>
+                        <span class="tp-stat-label">Revenue</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="top-product-card">
+                <div class="tp-rank">#3</div>
+                <div class="tp-thumb">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                    </svg>
+                </div>
+                <div class="tp-info">
+                    <h4>Sci-Fi Vehicle Bundle</h4>
+                    <p>Vehicles</p>
+                </div>
+                <div class="tp-stats">
+                    <div class="tp-stat">
+                        <span class="tp-stat-value">142</span>
+                        <span class="tp-stat-label">Sales</span>
+                    </div>
+                    <div class="tp-stat">
+                        <span class="tp-stat-value">$18,318</span>
+                        <span class="tp-stat-label">Revenue</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

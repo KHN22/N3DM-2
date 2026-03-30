@@ -20,4 +20,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+  <Target Name="CopySiteCss" AfterTargets="Build" Condition="Exists('$(ProjectDir)site.css')">
+    <Message Text="Copying site.css to wwwroot/css/site.css" Importance="Low" />
+    <Copy SourceFiles="$(ProjectDir)site.css" DestinationFiles="$(ProjectDir)wwwroot\css\site.css" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

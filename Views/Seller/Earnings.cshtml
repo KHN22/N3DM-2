@@ -1,0 +1,274 @@
+@model Marketplace.Models.SellerEarningsViewModel
+@{
+    ViewData["Title"] = "Earnings";
+    ViewData["SellerPage"] = "Earnings";
+    Layout = "_SellerLayout";
+
+    // Mock data for static preview
+    var earnings = Model ?? new Marketplace.Models.SellerEarningsViewModel
+    {
+        TotalEarnings = 12458.50m,
+        AvailableBalance = 3250.00m,
+        PendingBalance = 1250.00m,
+        LifetimeEarnings = 48920.75m,
+        CommissionRate = 15m,
+        PayoutMethod = "PayPal",
+        PayoutAccount = "seller@email.com"
+    };
+
+    var payouts = new List<Marketplace.Models.PayoutHistoryRow>
+    {
+        new() { PayoutId = "PAY-4521", Amount = 2500.00m, Method = "PayPal", RequestedDate = DateTime.Now.AddDays(-7), ProcessedDate = DateTime.Now.AddDays(-5), Status = "Completed" },
+        new() { PayoutId = "PAY-4520", Amount = 1850.00m, Method = "PayPal", RequestedDate = DateTime.Now.AddDays(-21), ProcessedDate = DateTime.Now.AddDays(-19), Status = "Completed" },
+        new() { PayoutId = "PAY-4519", Amount = 3200.00m, Method = "PayPal", RequestedDate = DateTime.Now.AddDays(-35), ProcessedDate = DateTime.Now.AddDays(-33), Status = "Completed" },
+        new() { PayoutId = "PAY-4518", Amount = 1420.00m, Method = "PayPal", RequestedDate = DateTime.Now.AddDays(-49), ProcessedDate = DateTime.Now.AddDays(-47), Status = "Completed" },
+        new() { PayoutId = "PAY-4517", Amount = 2100.00m, Method = "Bank Transfer", RequestedDate = DateTime.Now.AddDays(-63), ProcessedDate = DateTime.Now.AddDays(-60), Status = "Completed" }
+    };
+}
+
+<div class="seller-earnings-page">
+    @* ── Page Header ── *@
+    <div class="page-header-flex">
+        <div>
+            <h1>Earnings</h1>
+            <p class="page-desc">Track your earnings and manage payouts.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" id="requestPayoutBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                    <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                Request Payout
+            </button>
+        </div>
+    </div>
+
+    @* ── Earnings Stats ── *@
+    <div class="earnings-overview">
+        <div class="earnings-main-card">
+            <div class="earnings-balance-section">
+                <div class="balance-card available">
+                    <div class="balance-label">Available Balance</div>
+                    <div class="balance-value">$@earnings.AvailableBalance.ToString("N2")</div>
+                    <div class="balance-action">
+                        <button class="btn btn-success btn-sm">Withdraw Now</button>
+                    </div>
+                </div>
+                <div class="balance-card pending">
+                    <div class="balance-label">Pending Balance</div>
+                    <div class="balance-value">$@earnings.PendingBalance.ToString("N2")</div>
+                    <div class="balance-note">Clears in 7 days</div>
+                </div>
+            </div>
+            <div class="earnings-info-section">
+                <div class="info-item">
+                    <span class="info-label">This Month</span>
+                    <span class="info-value">$@earnings.TotalEarnings.ToString("N2")</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Lifetime Earnings</span>
+                    <span class="info-value">$@earnings.LifetimeEarnings.ToString("N2")</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Platform Fee</span>
+                    <span class="info-value">@earnings.CommissionRate%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* ── Charts Row ── *@
+    <div class="dashboard-charts-row">
+        @* Earnings Chart *@
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Earnings Over Time</h3>
+                <div class="chart-period-tabs">
+                    <button class="period-tab">7 Days</button>
+                    <button class="period-tab active">30 Days</button>
+                    <button class="period-tab">6 Months</button>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div class="bar-chart-container">
+                    <div class="chart-y-axis">
+                        <span>$3k</span>
+                        <span>$2k</span>
+                        <span>$1k</span>
+                        <span>$0</span>
+                    </div>
+                    <div class="bar-chart-mock">
+                        <div class="bar-group">
+                            <div class="bar" style="height: 45%"></div>
+                            <span class="bar-label">Week 1</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar" style="height: 62%"></div>
+                            <span class="bar-label">Week 2</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar" style="height: 78%"></div>
+                            <span class="bar-label">Week 3</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar" style="height: 90%"></div>
+                            <span class="bar-label">Week 4</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Earnings by Product *@
+        <div class="chart-card compact">
+            <div class="chart-header">
+                <h3>Top Earning Products</h3>
+            </div>
+            <div class="top-earners-list">
+                <div class="top-earner-item">
+                    <div class="earner-rank">#1</div>
+                    <div class="earner-info">
+                        <span class="earner-name">Sci-Fi Vehicle Bundle</span>
+                        <span class="earner-sales">142 sales</span>
+                    </div>
+                    <div class="earner-amount">$18,318</div>
+                </div>
+                <div class="top-earner-item">
+                    <div class="earner-rank">#2</div>
+                    <div class="earner-info">
+                        <span class="earner-name">Cyberpunk City Pack</span>
+                        <span class="earner-sales">324 sales</span>
+                    </div>
+                    <div class="earner-amount">$16,189</div>
+                </div>
+                <div class="top-earner-item">
+                    <div class="earner-rank">#3</div>
+                    <div class="earner-info">
+                        <span class="earner-name">Medieval Castle Kit</span>
+                        <span class="earner-sales">186 sales</span>
+                    </div>
+                    <div class="earner-amount">$14,694</div>
+                </div>
+                <div class="top-earner-item">
+                    <div class="earner-rank">#4</div>
+                    <div class="earner-info">
+                        <span class="earner-name">Nature Environment</span>
+                        <span class="earner-sales">98 sales</span>
+                    </div>
+                    <div class="earner-amount">$3,429</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* ── Payout Method Card ── *@
+    <div class="payout-method-section">
+        <div class="section-header-flex">
+            <h2>Payout Method</h2>
+            <button class="btn btn-ghost btn-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Edit
+            </button>
+        </div>
+        <div class="payout-method-card">
+            <div class="payout-icon paypal">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7.076 21.337H2.47a.641.641 0 01-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 00-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 00-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 00.554.647h3.882c.46 0 .85-.334.923-.788.06-.26.76-4.852.816-5.09a.932.932 0 01.923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.778-4.471z"/>
+                </svg>
+            </div>
+            <div class="payout-details">
+                <span class="payout-type">PayPal</span>
+                <span class="payout-account">@earnings.PayoutAccount</span>
+            </div>
+            <span class="badge badge-success">Active</span>
+        </div>
+    </div>
+
+    @* ── Payout History ── *@
+    <div class="dashboard-section">
+        <div class="section-header-flex">
+            <h2>Payout History</h2>
+        </div>
+
+        <div class="card">
+            <div class="table-wrapper">
+                <table class="data-table payouts-table">
+                    <thead>
+                        <tr>
+                            <th>Payout ID</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Requested</th>
+                            <th>Processed</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var payout in payouts)
+                        {
+                            <tr>
+                                <td class="payout-id">#@payout.PayoutId</td>
+                                <td class="amount">$@payout.Amount.ToString("N2")</td>
+                                <td>
+                                    <div class="method-cell">
+                                        @if (payout.Method == "PayPal")
+                                        {
+                                            <svg class="method-icon paypal" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                                <path d="M7.076 21.337H2.47a.641.641 0 01-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/>
+                                            </svg>
+                                        }
+                                        else
+                                        {
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                                <line x1="1" y1="10" x2="23" y2="10"/>
+                                            </svg>
+                                        }
+                                        @payout.Method
+                                    </div>
+                                </td>
+                                <td>@payout.RequestedDate.ToString("MMM dd, yyyy")</td>
+                                <td>@(payout.ProcessedDate?.ToString("MMM dd, yyyy") ?? "-")</td>
+                                <td>
+                                    @{
+                                        var statusClass = payout.Status switch
+                                        {
+                                            "Completed" => "badge-success",
+                                            "Processing" => "badge-warning",
+                                            "Failed" => "badge-danger",
+                                            _ => "badge-neutral"
+                                        };
+                                    }
+                                    <span class="badge @statusClass">@payout.Status</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @* ── Tax Info Notice ── *@
+    <div class="tax-notice">
+        <div class="notice-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+        </div>
+        <div class="notice-content">
+            <h4>Tax Information</h4>
+            <p>You are responsible for reporting your earnings to the appropriate tax authorities. We recommend consulting with a tax professional. You can download your earnings reports for tax purposes from the <a href="#">Reports</a> section.</p>
+        </div>
+    </div>
+</div>

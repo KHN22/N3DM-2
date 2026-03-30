@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marketplace.Controllers
 {
-    [RequireRoles("Admin")]
+    [RequireRoles("Admin,Moderator")]
     public class AdminController : Controller
     {
         private readonly ThreedmContext _db;
@@ -86,7 +86,66 @@ namespace Marketplace.Controllers
         // GET: /Admin/SellerApprovals
         public IActionResult SellerApprovals()
         {
-            return View(new List<SellerApprovalRow>());
+            // list users who requested to become sellers (role = SellerPending)
+            var pendingRole = _db.Roles.FirstOrDefault(r => r.RoleName == "SellerPending");
+            var sellerRole = _db.Roles.FirstOrDefault(r => r.RoleName == "Seller");
+            var rejectedRole = _db.Roles.FirstOrDefault(r => r.RoleName == "SellerRejected");
+
+            var pending = new List<SellerApprovalRow>();
+            if (pendingRole != null)
+            {
+                pending = _db.Users.Where(u => u.RoleId == pendingRole.RoleId)
+                    .Select(u => new SellerApprovalRow
+                    {
+                        Id = u.UserId,
+                        FullName = u.FullName,
+                        Email = u.Email,
+                        AppliedDate = u.CreatedDate ?? DateTime.UtcNow,
+                        Status = "Pending"
+                    })
+                    .OrderBy(u => u.AppliedDate)
+                    .ToList();
+            }
+
+            // compute all-time counts
+            ViewBag.PendingCount = pendingRole == null ? 0 : _db.Users.Count(u => u.RoleId == pendingRole.RoleId);
+            ViewBag.ApprovedCount = sellerRole == null ? 0 : _db.Users.Count(u => u.RoleId == sellerRole.RoleId);
+            ViewBag.RejectedCount = rejectedRole == null ? 0 : _db.Users.Count(u => u.RoleId == rejectedRole.RoleId);
+
+            return View(pending);
+        }
+
+        [HttpPost]
+        public IActionResult ApproveSeller(int userId)
+        {
+            var user = _db.Users.FirstOrDefault(u => u.UserId == userId);
+            if (user == null) return NotFound();
+
+            var sellerRole = _db.Roles.FirstOrDefault(r => r.RoleName == "Seller");
+            if (sellerRole == null) return BadRequest("Seller role not found");
+
+            user.RoleId = sellerRole.RoleId;
+            _db.SaveChanges();
+            return RedirectToAction("SellerApprovals");
+        }
+
+        [HttpPost]
+        public IActionResult RejectSeller(int userId)
+        {
+            var user = _db.Users.FirstOrDefault(u => u.UserId == userId);
+            if (user == null) return NotFound();
+
+            var rejectedRole = _db.Roles.FirstOrDefault(r => r.RoleName == "SellerRejected");
+            if (rejectedRole == null)
+            {
+                rejectedRole = new Role { RoleName = "SellerRejected" };
+                _db.Roles.Add(rejectedRole);
+                _db.SaveChanges();
+            }
+
+            user.RoleId = rejectedRole.RoleId;
+            _db.SaveChanges();
+            return RedirectToAction("SellerApprovals");
         }
 
         // GET: /Admin/Sales
@@ -96,6 +155,7 @@ namespace Marketplace.Controllers
         }
 
         // GET: /Admin/Roles
+        [RequireRoles("Admin")]
         public IActionResult Roles()
         {
             var roles = _db.Roles.OrderBy(r => r.RoleName).ToList();
@@ -123,6 +183,7 @@ namespace Marketplace.Controllers
         }
 
         [HttpPost]
+        [RequireRoles("Admin")]
         public IActionResult UpdateRole(int userId, int roleId)
         {
             var user = _db.Users.FirstOrDefault(u => u.UserId == userId);

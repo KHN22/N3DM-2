@@ -1,6 +1,18 @@
 @* ── Admin layout: wraps page in sidebar + content area ── *@
+@using N3DMMarket.Models.Db
+@using Microsoft.EntityFrameworkCore
+@inject ThreedmContext _db
 @{
     Layout = "_Layout";
+
+    var email = Context.Session.GetString("CurrentUserEmail");
+    var currentRole = string.Empty;
+    if (!string.IsNullOrEmpty(email))
+    {
+        var normalized = email.Trim().ToUpper();
+        var user = _db.Users.Include(u => u.Role).FirstOrDefault(u => u.Email.ToUpper() == normalized);
+        currentRole = user?.Role?.RoleName ?? string.Empty;
+    }
 }
 
 <div class="admin-layout">
@@ -49,14 +61,17 @@
             Sales Overview
         </a>
 
-        <a href="@Url.Action("Roles", "Admin")"
-           class="@(ViewData["AdminPage"]?.ToString() == "Roles" ? "active" : "")">
+        @if (string.Equals(currentRole, "Admin", System.StringComparison.OrdinalIgnoreCase))
+        {
+            <a href="@Url.Action("Roles", "Admin")"
+               class="@(ViewData["AdminPage"]?.ToString() == "Roles" ? "active" : "")">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
             Role Management
-        </a>
+            </a>
+        }
     </aside>
 
     @* ── Content ── *@

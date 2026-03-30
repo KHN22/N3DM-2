@@ -117,7 +117,7 @@
 
                             <div class="dropdown-divider"></div>
 
-                            @if (string.Equals(currentRole, "Admin", StringComparison.OrdinalIgnoreCase))
+                            @if (string.Equals(currentRole, "Admin", StringComparison.OrdinalIgnoreCase) || string.Equals(currentRole, "Moderator", System.StringComparison.OrdinalIgnoreCase))
                             {
                                 <a class="dropdown-item" href="@Url.Action("Index", "Admin")" role="menuitem">Admin Dashboard</a>
                             }
@@ -135,6 +135,17 @@
     </nav>
 
     @* ── Page Content ── *@
+
+    @{ var successMsg = TempData["Success"] as string; var errorMsg = TempData["Error"] as string; }
+    @if (!string.IsNullOrEmpty(successMsg))
+    {
+        <div class="flash flash-success" role="status">@successMsg</div>
+    }
+    @if (!string.IsNullOrEmpty(errorMsg))
+    {
+        <div class="flash flash-error" role="alert">@errorMsg</div>
+    }
+
     <main>
         @RenderBody()
     </main>

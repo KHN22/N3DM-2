@@ -1,0 +1,213 @@
+@model List<Marketplace.Models.SellerProductRow>
+@{
+    ViewData["Title"] = "My Products";
+    ViewData["SellerPage"] = "Products";
+    Layout = "_SellerLayout";
+
+    // Mock data for static preview
+    var products = Model ?? new List<Marketplace.Models.SellerProductRow>
+    {
+        new() { Id = 1, Title = "Cyberpunk City Pack", Category = "Characters", Price = 49.99m, Sales = 324, Views = 8420, Status = "Active", Revenue = 16189.76m, CreatedDate = DateTime.Now.AddDays(-120) },
+        new() { Id = 2, Title = "Medieval Castle Kit", Category = "Architecture", Price = 79.00m, Sales = 186, Views = 5280, Status = "Active", Revenue = 14694.00m, CreatedDate = DateTime.Now.AddDays(-90) },
+        new() { Id = 3, Title = "Sci-Fi Vehicle Bundle", Category = "Vehicles", Price = 129.00m, Sales = 142, Views = 4120, Status = "Active", Revenue = 18318.00m, CreatedDate = DateTime.Now.AddDays(-60) },
+        new() { Id = 4, Title = "Nature Environment", Category = "Environments", Price = 34.99m, Sales = 98, Views = 3200, Status = "Active", Revenue = 3429.02m, CreatedDate = DateTime.Now.AddDays(-45) },
+        new() { Id = 5, Title = "Low Poly Animals Pack", Category = "Characters", Price = 24.99m, Sales = 76, Views = 2840, Status = "Active", Revenue = 1899.24m, CreatedDate = DateTime.Now.AddDays(-30) },
+        new() { Id = 6, Title = "Horror Props Collection", Category = "Props", Price = 19.99m, Sales = 21, Views = 980, Status = "Draft", Revenue = 419.79m, CreatedDate = DateTime.Now.AddDays(-10) },
+        new() { Id = 7, Title = "Space Station Interior", Category = "Architecture", Price = 89.00m, Sales = 0, Views = 0, Status = "Under Review", Revenue = 0, CreatedDate = DateTime.Now.AddDays(-2) }
+    };
+}
+
+<div class="seller-products-page">
+    @* ── Page Header ── *@
+    <div class="page-header-flex">
+        <div>
+            <h1>My Products</h1>
+            <p class="page-desc">Manage your product listings, pricing, and availability.</p>
+        </div>
+        <div class="header-actions">
+            <a href="@Url.Action("Create", "Seller")" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add New Product
+            </a>
+        </div>
+    </div>
+
+    @* ── Filters / Search ── *@
+    <div class="products-toolbar">
+        <div class="search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" class="form-input" placeholder="Search products..." />
+        </div>
+
+        <div class="filter-group">
+            <select class="form-select">
+                <option value="">All Categories</option>
+                <option value="characters">Characters</option>
+                <option value="architecture">Architecture</option>
+                <option value="vehicles">Vehicles</option>
+                <option value="environments">Environments</option>
+                <option value="props">Props</option>
+            </select>
+
+            <select class="form-select">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="draft">Draft</option>
+                <option value="paused">Paused</option>
+                <option value="review">Under Review</option>
+            </select>
+
+            <select class="form-select">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="sales">Most Sales</option>
+                <option value="revenue">Highest Revenue</option>
+                <option value="views">Most Views</option>
+            </select>
+        </div>
+    </div>
+
+    @* ── Product Stats Summary ── *@
+    <div class="products-summary">
+        <div class="summary-stat">
+            <span class="summary-value">@products.Count</span>
+            <span class="summary-label">Total Products</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+            <span class="summary-value">@products.Count(p => p.Status == "Active")</span>
+            <span class="summary-label">Active</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+            <span class="summary-value">@products.Count(p => p.Status == "Draft")</span>
+            <span class="summary-label">Drafts</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+            <span class="summary-value">@products.Count(p => p.Status == "Under Review")</span>
+            <span class="summary-label">Under Review</span>
+        </div>
+    </div>
+
+    @* ── Products Table ── *@
+    <div class="card">
+        <div class="table-wrapper">
+            <table class="data-table products-table">
+                <thead>
+                    <tr>
+                        <th class="col-product">Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Sales</th>
+                        <th>Views</th>
+                        <th>Revenue</th>
+                        <th>Status</th>
+                        <th class="col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in products)
+                    {
+                        <tr>
+                            <td class="col-product">
+                                <div class="product-cell">
+                                    <div class="product-thumb-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="1.5">
+                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="product-title-cell">
+                                        <span class="product-title">@product.Title</span>
+                                        <span class="product-date">Added @product.CreatedDate.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@product.Category</td>
+                            <td class="price">$@product.Price.ToString("N2")</td>
+                            <td>@product.Sales</td>
+                            <td>@product.Views.ToString("N0")</td>
+                            <td class="revenue">$@product.Revenue.ToString("N2")</td>
+                            <td>
+                                @{
+                                    var statusClass = product.Status switch
+                                    {
+                                        "Active" => "badge-success",
+                                        "Draft" => "badge-neutral",
+                                        "Paused" => "badge-warning",
+                                        "Under Review" => "badge-primary",
+                                        _ => "badge-neutral"
+                                    };
+                                }
+                                <span class="badge @statusClass">@product.Status</span>
+                            </td>
+                            <td class="col-actions">
+                                <div class="action-buttons">
+                                    <a href="@Url.Action("Edit", "Seller", new { id = product.Id })" class="btn btn-ghost btn-icon" title="Edit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="btn btn-ghost btn-icon" title="View Analytics">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="18" y1="20" x2="18" y2="10"/>
+                                            <line x1="12" y1="20" x2="12" y2="4"/>
+                                            <line x1="6" y1="20" x2="6" y2="14"/>
+                                        </svg>
+                                    </a>
+                                    <form method="post" asp-action="Delete" asp-controller="Seller" onsubmit="return confirm('Delete this product?');" style="display:inline-block;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@product.Id" />
+                                        <button type="submit" class="btn btn-ghost btn-icon" title="Delete">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6" />
+                                                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                                                <path d="M10 11v6" /><path d="M14 11v6" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @* ── Pagination ── *@
+    <div class="pagination-bar">
+        <span class="pagination-info">Showing 1-@products.Count of @products.Count products</span>
+        <div class="pagination-controls">
+            <button class="btn btn-ghost btn-sm" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                Previous
+            </button>
+            <div class="page-numbers">
+                <button class="page-num active">1</button>
+            </div>
+            <button class="btn btn-ghost btn-sm" disabled>
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>

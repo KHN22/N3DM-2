@@ -1,3 +1,4 @@
+@model List<Marketplace.Models.ProductViewModel>
 @{
     ViewData["Title"] = "Home";
     ViewData["ActivePage"] = "Home";
@@ -78,63 +79,30 @@
         </div>
 
         <div class="product-grid">
-            @* Card 1 *@
-            <div class="product-card">
-                <div class="product-thumb">
-                    <span class="badge badge-primary product-badge">New</span>
-                    3D Preview
-                </div>
-                <div class="product-info">
-                    <h3>Sakura VTuber Avatar</h3>
-                    <div class="product-meta">
-                        <span class="product-price">$24.99</span>
-                        <span class="product-seller">by ArtistPro</span>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var p in Model)
+                {
+                    <div class="product-card">
+                        <div class="product-thumb">
+                            <a href="@Url.Action("Details", "Store", new { id = p.Id })">
+                                <img src="@p.ThumbnailUrl" alt="@p.Title" />
+                            </a>
+                        </div>
+                        <div class="product-info">
+                            <h3>@p.Title</h3>
+                            <div class="product-meta">
+                                <span class="product-price">$@p.Price.ToString("N2")</span>
+                                <span class="product-seller">by @p.Seller</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="product-tags">
-                        <span class="tag">VTuber</span>
-                        <span class="tag">Rigged</span>
-                        <span class="tag">FBX</span>
-                    </div>
-                </div>
-            </div>
-
-            @* Card 2 *@
-            <div class="product-card">
-                <div class="product-thumb">
-                    3D Preview
-                </div>
-                <div class="product-info">
-                    <h3>Mechanical Dragon - Print Ready</h3>
-                    <div class="product-meta">
-                        <span class="product-price">$12.50</span>
-                        <span class="product-seller">by MakerStudio</span>
-                    </div>
-                    <div class="product-tags">
-                        <span class="tag">3D Print</span>
-                        <span class="tag">STL</span>
-                    </div>
-                </div>
-            </div>
-
-            @* Card 3 *@
-            <div class="product-card">
-                <div class="product-thumb">
-                    <span class="badge badge-warning product-badge">Popular</span>
-                    3D Preview
-                </div>
-                <div class="product-info">
-                    <h3>Cyberpunk Room Environment</h3>
-                    <div class="product-meta">
-                        <span class="product-price">$39.00</span>
-                        <span class="product-seller">by SceneForge</span>
-                    </div>
-                    <div class="product-tags">
-                        <span class="tag">Environment</span>
-                        <span class="tag">Unity</span>
-                        <span class="tag">GLTF</span>
-                    </div>
-                </div>
-            </div>
+                }
+            }
+            else
+            {
+                <p>No products available.</p>
+            }
         </div>
     </div>
 </section>

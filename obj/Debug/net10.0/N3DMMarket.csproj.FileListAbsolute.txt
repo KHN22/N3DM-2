@@ -66,7 +66,6 @@ D:\N3DM-Market\N3DM\obj\Debug\net10.0\refint\N3DMMarket.dll
 D:\N3DM-Market\N3DM\obj\Debug\net10.0\N3DMMarket.pdb
 D:\N3DM-Market\N3DM\obj\Debug\net10.0\N3DMMarket.genruntimeconfig.cache
 D:\N3DM-Market\N3DM\obj\Debug\net10.0\ref\N3DMMarket.dll
-D:\N3DM-Market\N3DM\obj\Debug\net10.0\compressed\7r7vcfrha0-{0}-gkrj8flfx7-gkrj8flfx7.gz
 F:\66073816\N3DM-project\N3DM-2\bin\Debug\net10.0\Data\orders.json
 F:\66073816\N3DM-project\N3DM-2\bin\Debug\net10.0\components.json
 F:\66073816\N3DM-project\N3DM-2\bin\Debug\net10.0\package.json
@@ -396,3 +395,4 @@ D:\N3DM-Market\N3DM\bin\Debug\net10.0\runtimes\win-x64\native\Microsoft.Data.Sql
 D:\N3DM-Market\N3DM\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 D:\N3DM-Market\N3DM\obj\Debug\net10.0\N3DMMarket.csproj.Up2Date
 D:\N3DM-Market\N3DM\bin\Debug\net10.0\Data\orders.json
+D:\N3DM-Market\N3DM\obj\Debug\net10.0\compressed\7r7vcfrha0-{0}-opra0l3p8q-opra0l3p8q.gz

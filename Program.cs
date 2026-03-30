@@ -57,7 +57,7 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<ThreedmContext>();
     try
     {
-        var roles = new[] { "Admin", "Moderator", "Seller", "Customer" };
+        var roles = new[] { "Admin", "Moderator", "Seller", "SellerPending", "SellerRejected", "Customer" };
         foreach (var rn in roles)
         {
             if (!context.Roles.Any(r => r.RoleName == rn))

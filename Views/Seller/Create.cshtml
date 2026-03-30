@@ -1,0 +1,353 @@
+@model Marketplace.Models.ProductFormViewModel
+@{
+    ViewData["Title"] = "Add New Product";
+    ViewData["SellerPage"] = "Products";
+    Layout = "_SellerLayout";
+
+    var isEdit = Model != null && Model.Id > 0;
+    var pageTitle = isEdit ? "Edit Product" : "Add New Product";
+}
+
+<div class="product-form-page">
+    @* ── Page Header ── *@
+    <div class="page-header-flex">
+        <div class="header-with-back">
+            <a href="@Url.Action("Products", "Seller")" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+            </a>
+            <div>
+                <h1>@pageTitle</h1>
+                <p class="page-desc">Fill in the details below to list your 3D model on the marketplace.</p>
+            </div>
+        </div>
+    </div>
+
+    <form asp-action="@(isEdit ? "Update" : "Create")" method="post" enctype="multipart/form-data" class="product-form">
+        @Html.AntiForgeryToken()
+        @if (isEdit)
+        {
+            <input type="hidden" name="Id" value="@Model.Id" />
+        }
+        <div class="form-layout">
+            @* ── Main Content ── *@
+            <div class="form-main">
+                @* Basic Information *@
+                <div class="form-section card">
+                    <div class="form-section-header">
+                        <h2>Basic Information</h2>
+                        <p>Provide essential details about your product.</p>
+                    </div>
+                    <div class="form-section-body">
+                        <div class="form-group">
+                            <label class="form-label" for="title">Product Title <span class="required">*</span></label>
+                            <input type="text" id="title" name="Title" class="form-input" placeholder="e.g., Cyberpunk Character Pack" value="@Model?.Title" required />
+                            <span class="form-hint">Keep it concise and descriptive. Max 100 characters.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="description">Description <span class="required">*</span></label>
+                            <textarea id="description" name="Description" class="form-textarea" rows="6" placeholder="Describe your product in detail. Include features, use cases, and what makes it unique...">@(Model == null ? string.Empty : "")</textarea>
+                            <span class="form-hint">Be detailed! Good descriptions help buyers make decisions.</span>
+                        </div>
+
+                        <div class="form-row-2">
+                            @{
+                                var _selectedCat = Model?.Category ?? string.Empty;
+                            }
+                            <div class="form-group">
+                                <label class="form-label" for="category">Category <span class="required">*</span></label>
+                                <select id="category" name="Category" class="form-select" required>
+                                    <option value="">Select a category</option>
+                                    <option value="characters">Characters &amp; Creatures</option>
+                                    <option value="architecture">Architecture</option>
+                                    <option value="vehicles">Vehicles</option>
+                                    <option value="environments">Environments</option>
+                                    <option value="props">Props &amp; Objects</option>
+                                    <option value="textures">Textures &amp; Materials</option>
+                                    <option value="animations">Animations</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="tags">Tags</label>
+                                <input type="text" id="tags" name="Tags" class="form-input" placeholder="e.g., lowpoly, game-ready, rigged" />
+                                <span class="form-hint">Separate tags with commas.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* File Upload *@
+                <div class="form-section card">
+                    <div class="form-section-header">
+                        <h2>Product Files</h2>
+                        <p>Upload your 3D model files and preview images.</p>
+                    </div>
+                    <div class="form-section-body">
+                        <div class="form-group">
+                            <label class="form-label">3D Model File <span class="required">*</span></label>
+                            <div class="file-upload-zone" id="modelUpload">
+                                <div class="upload-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </div>
+                                <div class="upload-text">
+                                    <span class="upload-title">Drop your file here, or <span class="upload-link">browse</span></span>
+                                    <span class="upload-hint">Supported formats: FBX, OBJ, GLTF, GLB, BLEND (Max 500MB)</span>
+                                </div>
+                                <input type="file" name="ModelFile" accept=".fbx,.obj,.gltf,.glb,.blend,.zip" hidden />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Thumbnail Image <span class="required">*</span></label>
+                                <div class="file-upload-zone thumbnail-upload" id="thumbnailUpload">
+                                <div class="upload-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                </div>
+                                <div class="upload-text">
+                                    <span class="upload-title">Upload thumbnail</span>
+                                    <span class="upload-hint">PNG, JPG (Recommended: 800x600px)</span>
+                                </div>
+                                <input type="file" name="ThumbnailFile" accept=".png,.jpg,.jpeg,.webp" hidden />
+                                @if (!string.IsNullOrEmpty(Model?.ThumbnailUrl))
+                                {
+                                    <div class="thumbnail-preview">
+                                        <img src="@Model.ThumbnailUrl" alt="Thumbnail" style="max-width:100%;height:auto;" />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Additional Preview Images</label>
+                            <div class="preview-images-grid">
+                                <div class="preview-upload-slot">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </div>
+                                <div class="preview-upload-slot">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </div>
+                                <div class="preview-upload-slot">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </div>
+                                <div class="preview-upload-slot">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <span class="form-hint">Add up to 4 additional images to showcase your product.</span>
+                        </div>
+                    </div>
+                </div>
+
+                @* Technical Details *@
+                <div class="form-section card">
+                    <div class="form-section-header">
+                        <h2>Technical Details</h2>
+                        <p>Help buyers understand the specifications.</p>
+                    </div>
+                    <div class="form-section-body">
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label class="form-label" for="polycount">Polygon Count</label>
+                                <input type="text" id="polycount" name="PolyCount" class="form-input" placeholder="e.g., 15,000" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="vertices">Vertices</label>
+                                <input type="text" id="vertices" name="Vertices" class="form-input" placeholder="e.g., 8,500" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="textures">Texture Resolution</label>
+                                <input type="text" id="textures" name="TextureResolution" class="form-input" placeholder="e.g., 4K" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Features</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Features" value="rigged" />
+                                    <span class="checkbox-label">Rigged</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Features" value="animated" />
+                                    <span class="checkbox-label">Animated</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Features" value="game-ready" />
+                                    <span class="checkbox-label">Game Ready</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Features" value="pbr" />
+                                    <span class="checkbox-label">PBR Materials</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Features" value="uv-mapped" />
+                                    <span class="checkbox-label">UV Mapped</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Features" value="lowpoly" />
+                                    <span class="checkbox-label">Low Poly</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Supported Formats</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Formats" value="fbx" checked />
+                                    <span class="checkbox-label">FBX</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Formats" value="obj" />
+                                    <span class="checkbox-label">OBJ</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Formats" value="gltf" />
+                                    <span class="checkbox-label">GLTF/GLB</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Formats" value="blend" />
+                                    <span class="checkbox-label">Blender</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Formats" value="max" />
+                                    <span class="checkbox-label">3ds Max</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="Formats" value="maya" />
+                                    <span class="checkbox-label">Maya</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* ── Sidebar ── *@
+            <div class="form-sidebar">
+                @* Pricing *@
+                <div class="form-section card">
+                    <div class="form-section-header">
+                        <h2>Pricing</h2>
+                    </div>
+                    <div class="form-section-body">
+                        <div class="form-group">
+                            <label class="form-label" for="price">Price (USD) <span class="required">*</span></label>
+                                <div class="price-input-wrapper">
+                                <span class="currency-symbol">$</span>
+                                <input type="number" id="price" name="Price" class="form-input" placeholder="0.00" step="0.01" min="0" value="@(Model?.Price.ToString("0.00") ?? "0.00")" required />
+                            </div>
+                        </div>
+
+                        <div class="price-breakdown">
+                            <div class="breakdown-row">
+                                <span>Platform Fee (15%)</span>
+                                <span class="fee-amount">-$0.00</span>
+                            </div>
+                            <div class="breakdown-row highlight">
+                                <span>Your Earnings</span>
+                                <span class="earnings-amount">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @* License *@
+                <div class="form-section card">
+                    <div class="form-section-header">
+                        <h2>License</h2>
+                    </div>
+                    <div class="form-section-body">
+                        <div class="license-options">
+                            <label class="license-option">
+                                <input type="radio" name="License" value="standard" checked />
+                                <div class="license-card">
+                                    <span class="license-title">Standard License</span>
+                                    <span class="license-desc">For personal and single commercial projects</span>
+                                </div>
+                            </label>
+                            <label class="license-option">
+                                <input type="radio" name="License" value="extended" />
+                                <div class="license-card">
+                                    <span class="license-title">Extended License</span>
+                                    <span class="license-desc">For unlimited commercial use and redistribution</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                @* Publish Options *@
+                <div class="form-section card">
+                    <div class="form-section-header">
+                        <h2>Visibility</h2>
+                    </div>
+                    <div class="form-section-body">
+                                <div class="publish-options">
+                            <label class="publish-option">
+                                <input type="radio" name="Status" value="Active" @(Model?.Status == "Active" ? "checked" : "") />
+                                <div class="publish-card">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                    <span>Publish Now</span>
+                                </div>
+                            </label>
+                            <label class="publish-option">
+                                <input type="radio" name="Status" value="Draft" @(Model?.Status != "Active" ? "checked" : "") />
+                                <div class="publish-card">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                    <span>Save as Draft</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                @* Submit Buttons *@
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg btn-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        @(isEdit ? "Save Changes" : "Create Product")
+                    </button>
+                    <a href="@Url.Action("Products", "Seller")" class="btn btn-secondary btn-lg btn-full">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

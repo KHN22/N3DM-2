@@ -129,7 +129,9 @@ namespace Marketplace.Controllers
                 }
 
                 // Ensure the role exists (create if missing)
-                var roleName = string.IsNullOrWhiteSpace(model.Role) ? "Customer" : model.Role;
+                // If user selected Seller, create account as 'SellerPending' so moderators review
+                var requestedRole = string.IsNullOrWhiteSpace(model.Role) ? "Customer" : model.Role;
+                var roleName = requestedRole == "Seller" ? "SellerPending" : requestedRole;
                 var role = _context.Roles.FirstOrDefault(r => r.RoleName == roleName);
                 if (role == null)
                 {

@@ -19,14 +19,17 @@ namespace Marketplace.Controllers
         public IActionResult Index()
         {
             var products = _db.Products
+                .Include(p => p.Seller)
+                .Where(p => p.IsPublished)
+                .OrderByDescending(p => p.CreatedAt)
                 .Select(p => new ProductViewModel
                 {
                     Id = p.ProductId,
                     Title = p.Title,
                     Price = p.Price,
                     Category = p.Category,
-                    ThumbnailUrl = p.ThumbnailUrl,
-                    Seller = string.Empty,
+                    ThumbnailUrl = string.IsNullOrEmpty(p.ThumbnailUrl) ? "/images/placeholder-product.png" : p.ThumbnailUrl,
+                    Seller = p.Seller != null ? p.Seller.FullName : string.Empty,
                     Tags = new List<string>()
                 })
                 .ToList();
