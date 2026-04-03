@@ -1,0 +1,28 @@
+@model Marketplace.Models.PurchaseViewModel
+@{
+    ViewData["Title"] = "Order Details";
+    var items = ViewData["OrderItems"] as List<N3DMMarket.Models.Db.OrderItem> ?? new List<N3DMMarket.Models.Db.OrderItem>();
+}
+
+<h1>Order @Model.OrderId</h1>
+<p>Total: <strong>@Model.Amount.ToString("C")</strong></p>
+<p>Date: @Model.PurchaseDate.ToString("g")</p>
+<p>Status: @Model.Status</p>
+
+<h3>Items</h3>
+<table class="table">
+    <thead><tr><th>Title</th><th>Price</th><th>Qty</th><th>Line</th></tr></thead>
+    <tbody>
+    @foreach(var it in items)
+    {
+        <tr>
+            <td>@it.TitleSnapshot</td>
+            <td>@it.PriceSnapshot.ToString("C")</td>
+            <td>@it.Quantity</td>
+            <td>@it.LineTotal.ToString("C")</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a class="btn" href="@Url.Action("History", "Profile")">Back to history</a>

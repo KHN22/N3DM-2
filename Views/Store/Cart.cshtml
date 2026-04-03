@@ -1,4 +1,5 @@
 @model List<Marketplace.Models.CartItem>
+
 @{
     ViewData["Title"] = "Your Cart";
 }
@@ -12,7 +13,7 @@
     else
     {
         <table class="table">
-            <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th></th></tr></thead>
+            <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead>
             <tbody>
             @foreach(var item in Model)
             {
@@ -20,6 +21,7 @@
                     <td>@item.Title</td>
                     <td>$@item.Price.ToString("F2")</td>
                     <td>@item.Quantity</td>
+                    <td>$@((item.Price * item.Quantity).ToString("F2"))</td>
                     <td>
                         <form asp-action="RemoveFromCart" method="post" style="display:inline">
                             <input type="hidden" name="id" value="@item.ProductId" />
@@ -32,10 +34,7 @@
         </table>
 
         <div style="margin-top:12px;">
-            <form asp-action="CheckoutConfirm" method="post" style="display:inline-block; margin-right:8px;">
-                <label>Email (optional): <input type="email" name="customerEmail" /></label>
-                <button class="btn btn-primary">Place Order</button>
-            </form>
+            <a class="btn btn-primary" href="@Url.Action("Checkout", "Store")">Proceed to checkout</a>
             <a class="btn" href="/Store">Continue shopping</a>
         </div>
     }

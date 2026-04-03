@@ -1,4 +1,5 @@
-@model List<ProductViewModel>
+@model List<Marketplace.Models.ProductViewModel>
+
 @{
     ViewData["Title"] = "Store";
     ViewData["ActivePage"] = "Store";
@@ -9,7 +10,6 @@
     <h1 style="font-size:1.5rem; font-weight:700; margin-bottom:4px;">Store</h1>
     <p class="text-muted" style="margin-bottom:24px;">Browse 3D models from talented creators</p>
 
-    @* ── Toolbar ── *@
     <div class="store-toolbar">
         <div class="search-box">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -18,26 +18,8 @@
             </svg>
             <input class="form-input" type="text" placeholder="Search models..." />
         </div>
-
-        <div class="store-filters">
-            <select class="form-select" style="width:auto; min-width:140px;">
-                <option>All Categories</option>
-                <option>VTuber Avatars</option>
-                <option>3D Print Files</option>
-                <option>Props &amp; Accessories</option>
-                <option>Environments</option>
-            </select>
-
-            <select class="form-select" style="width:auto; min-width:130px;">
-                <option>Sort: Newest</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Most Popular</option>
-            </select>
-        </div>
     </div>
 
-    @* ── Product Grid ── *@
     <div class="product-grid">
 
         @if (Model != null && Model.Count > 0)
@@ -66,66 +48,20 @@
                                 <span class="tag">@tag</span>
                             }
                         </div>
+                        <div style="margin-top:8px;">
+                            <form method="post" action="@Url.Action("AddToCart", "Store")" style="display:inline">
+                                <input type="hidden" name="id" value="@product.Id" />
+                                <button class="btn" type="submit">Add to cart</button>
+                            </form>
+                            <a class="btn" href="/Store/Details/@product.Id">View</a>
+                        </div>
                     </div>
                 </div>
             }
         }
         else
         {
-            @* Static fallback cards when no model data is passed *@
-            <div class="product-card">
-                <div class="product-thumb"><span class="badge badge-primary product-badge">New</span>3D Preview</div>
-                <div class="product-info">
-                    <h3>Sakura VTuber Avatar</h3>
-                    <div class="product-meta"><span class="product-price">$24.99</span><span class="product-seller">by ArtistPro</span></div>
-                    <div class="product-tags"><span class="tag">VTuber</span><span class="tag">Rigged</span><span class="tag">FBX</span></div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-thumb">3D Preview</div>
-                <div class="product-info">
-                    <h3>Mechanical Dragon - Print Ready</h3>
-                    <div class="product-meta"><span class="product-price">$12.50</span><span class="product-seller">by MakerStudio</span></div>
-                    <div class="product-tags"><span class="tag">3D Print</span><span class="tag">STL</span></div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-thumb"><span class="badge badge-warning product-badge">Popular</span>3D Preview</div>
-                <div class="product-info">
-                    <h3>Cyberpunk Room Environment</h3>
-                    <div class="product-meta"><span class="product-price">$39.00</span><span class="product-seller">by SceneForge</span></div>
-                    <div class="product-tags"><span class="tag">Environment</span><span class="tag">Unity</span><span class="tag">GLTF</span></div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-thumb">3D Preview</div>
-                <div class="product-info">
-                    <h3>Low-Poly Fox Companion</h3>
-                    <div class="product-meta"><span class="product-price">$8.00</span><span class="product-seller">by PolyWorks</span></div>
-                    <div class="product-tags"><span class="tag">Props</span><span class="tag">Low-Poly</span><span class="tag">OBJ</span></div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-thumb"><span class="badge badge-primary product-badge">New</span>3D Preview</div>
-                <div class="product-info">
-                    <h3>Anime Girl - Full Rig</h3>
-                    <div class="product-meta"><span class="product-price">$45.00</span><span class="product-seller">by RigMaster</span></div>
-                    <div class="product-tags"><span class="tag">VTuber</span><span class="tag">Rigged</span><span class="tag">VRM</span></div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-thumb">3D Preview</div>
-                <div class="product-info">
-                    <h3>Medieval Castle Diorama</h3>
-                    <div class="product-meta"><span class="product-price">$18.75</span><span class="product-seller">by CastleCraft</span></div>
-                    <div class="product-tags"><span class="tag">3D Print</span><span class="tag">Diorama</span><span class="tag">STL</span></div>
-                </div>
-            </div>
+            <p>No products available.</p>
         }
     </div>
 </div>

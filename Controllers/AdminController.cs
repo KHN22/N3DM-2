@@ -19,14 +19,51 @@ namespace Marketplace.Controllers
         // GET: /Admin
         public IActionResult Index()
         {
-            // Static mock data — view also has fallback values
+            // Build dashboard metrics from real data
+            var totalUsers = _db.Users.Count();
+            var sellerRole = _db.Roles.FirstOrDefault(r => r.RoleName == "Seller");
+            var totalSellers = sellerRole == null ? 0 : _db.Users.Count(u => u.RoleId == sellerRole.RoleId);
+            var totalProducts = _db.Products.Count();
+            var totalRevenue = _db.Orders.Sum(o => (decimal?)o.TotalAmount) ?? 0m;
+
+            // Recent users
+            var recentUsers = _db.Users.Include(u => u.Role).OrderByDescending(u => u.CreatedDate).Take(10)
+                .Select(u => new AdminUserRow
+                {
+                    Id = u.UserId,
+                    FullName = u.FullName,
+                    Email = u.Email,
+                    Role = u.Role.RoleName,
+                    Status = (u.IsActive ?? true) ? "Active" : "Suspended",
+                    JoinedDate = u.CreatedDate ?? DateTime.UtcNow
+                })
+                .ToList();
+
+            // monthly sales for last 12 months
+            var twelveMonthsAgo = DateTime.UtcNow.AddMonths(-11);
+            var monthly = _db.Orders.Where(o => o.CreatedAt >= new DateTime(twelveMonthsAgo.Year, twelveMonthsAgo.Month, 1))
+                .AsEnumerable()
+                .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
+                .Select(g => new { g.Key.Year, g.Key.Month, Total = g.Sum(x => x.TotalAmount) })
+                .OrderBy(x => x.Year).ThenBy(x => x.Month)
+                .ToList();
+
+            var monthSeries = new List<int>();
+            for (int i = 0; i < 12; i++)
+            {
+                var d = DateTime.UtcNow.AddMonths(-11 + i);
+                var found = monthly.FirstOrDefault(m => m.Year == d.Year && m.Month == d.Month);
+                monthSeries.Add(found == null ? 0 : (int)Math.Round(found.Total));
+            }
+
             var dashboard = new AdminDashboardViewModel
             {
-                TotalUsers = 1284,
-                TotalSellers = 156,
-                TotalProducts = 2847,
-                TotalRevenue = 48320,
-                RecentUsers = new List<AdminUserRow>()  // empty → view renders static rows
+                TotalUsers = totalUsers,
+                TotalSellers = totalSellers,
+                TotalProducts = totalProducts,
+                TotalRevenue = totalRevenue,
+                RecentUsers = recentUsers,
+                MonthlySales = monthSeries
             };
 
             return View(dashboard);
@@ -151,6 +188,41 @@ namespace Marketplace.Controllers
         // GET: /Admin/Sales
         public IActionResult Sales()
         {
+            // compute top products by revenue
+            var topProducts = _db.OrderItems
+                .GroupBy(oi => oi.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    Quantity = g.Sum(x => x.Quantity),
+                    Revenue = g.Sum(x => x.LineTotal)
+                })
+                .OrderByDescending(x => x.Revenue)
+                .Take(20)
+                .ToList();
+
+            var top = topProducts.Join(_db.Products, t => t.ProductId, p => p.ProductId, (t, p) => new
+            {
+                p.ProductId,
+                p.Title,
+                t.Quantity,
+                t.Revenue
+            }).ToList();
+
+            // recent orders
+            var recentOrders = _db.Orders.Include(o => o.OrderItems).OrderByDescending(o => o.CreatedAt).Take(30)
+                .Select(o => new
+                {
+                    o.OrderId,
+                    o.CustomerEmail,
+                    o.TotalAmount,
+                    o.CreatedAt,
+                    ItemCount = o.OrderItems.Count
+                })
+                .ToList();
+
+            ViewBag.TopProducts = top;
+            ViewBag.RecentOrders = recentOrders;
             return View();
         }
 

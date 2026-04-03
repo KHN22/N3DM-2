@@ -9,10 +9,12 @@ namespace Marketplace.Controllers
     public class StoreController : Controller
     {
         private readonly ThreedmContext _db;
+        private readonly ILogger<StoreController> _logger;
 
-        public StoreController(ThreedmContext db)
+        public StoreController(ThreedmContext db, ILogger<StoreController> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         // GET: /Store
@@ -113,6 +115,13 @@ namespace Marketplace.Controllers
             return View(cart);
         }
 
+        // DEBUG: return current session cart as JSON (temporary)
+        public IActionResult DebugCart()
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<List<CartItem>>("cart") ?? new List<CartItem>();
+            return Json(new { count = cart.Count, items = cart });
+        }
+
         // POST: /Store/CheckoutConfirm
         [HttpPost]
         public IActionResult CheckoutConfirm(string? customerEmail)
@@ -121,15 +130,29 @@ namespace Marketplace.Controllers
             if (cart.Count == 0) return RedirectToAction("Index");
 
             // create DB order
+            // prefer explicit email param, fallback to session email, else empty
+            var sessionEmail = HttpContext.Session.GetString("CurrentUserEmail");
+            var finalEmail = (customerEmail ?? sessionEmail ?? string.Empty).Trim();
+
             var dbOrder = new N3DMMarket.Models.Db.Order
             {
-                CustomerEmail = customerEmail,
+                CustomerEmail = finalEmail,
                 TotalAmount = cart.Sum(i => i.Price * i.Quantity),
                 CreatedAt = DateTime.UtcNow,
                 Status = "Completed",
                 PaymentMethod = "Prototype",
                 PaymentStatus = "Completed"
             };
+
+            // attach user if logged in (store user id on order for history)
+            if (!string.IsNullOrEmpty(sessionEmail))
+            {
+                var user = _db.Users.FirstOrDefault(u => u.Email.ToUpper() == sessionEmail.Trim().ToUpper());
+                if (user != null)
+                {
+                    dbOrder.UserId = user.UserId;
+                }
+            }
 
             foreach (var item in cart)
             {
@@ -144,7 +167,17 @@ namespace Marketplace.Controllers
             }
 
             _db.Orders.Add(dbOrder);
-            _db.SaveChanges();
+            try
+            {
+                _db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Failed to save order to database");
+                var baseMsg = ex.GetBaseException()?.Message ?? ex.Message;
+                TempData["Error"] = "Failed to create order: " + baseMsg;
+                return RedirectToAction("Cart");
+            }
 
             // Clear cart
             HttpContext.Session.Remove("cart");

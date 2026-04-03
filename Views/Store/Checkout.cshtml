@@ -1,4 +1,5 @@
 @model List<Marketplace.Models.CartItem>
+
 @{
     ViewData["Title"] = "Checkout";
 }
@@ -16,7 +17,7 @@
                 <td>@item.Title</td>
                 <td>$@item.Price.ToString("F2")</td>
                 <td>@item.Quantity</td>
-                <td>$@(item.Price * item.Quantity).ToString("F2")</td>
+                <td>$@((item.Price * item.Quantity).ToString("F2"))</td>
             </tr>
         }
         </tbody>
@@ -27,4 +28,3 @@
         <button class="btn btn-primary">Confirm and Pay</button>
     </form>
 </div>
-

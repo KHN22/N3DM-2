@@ -66,43 +66,52 @@
                 <thead>
                     <tr>
                         <th>Product</th>
-                        <th>Seller</th>
                         <th>Units Sold</th>
                         <th>Revenue</th>
-                        <th>Category</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Anime Girl - Full Rig</td>
-                        <td>RigMaster</td>
-                        <td>342</td>
-                        <td style="font-weight:600; color:var(--text-primary);">$15,390</td>
-                        <td><span class="badge badge-primary">VTuber</span></td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Cyberpunk Room Environment</td>
-                        <td>SceneForge</td>
-                        <td>287</td>
-                        <td style="font-weight:600; color:var(--text-primary);">$11,193</td>
-                        <td><span class="badge badge-primary">Environment</span></td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Sakura VTuber Avatar</td>
-                        <td>ArtistPro</td>
-                        <td>256</td>
-                        <td style="font-weight:600; color:var(--text-primary);">$6,397</td>
-                        <td><span class="badge badge-primary">VTuber</span></td>
-                    </tr>
-                    <tr>
-                        <td style="color:var(--text-primary); font-weight:500;">Mechanical Dragon</td>
-                        <td>MakerStudio</td>
-                        <td>198</td>
-                        <td style="font-weight:600; color:var(--text-primary);">$2,475</td>
-                        <td><span class="badge badge-primary">3D Print</span></td>
-                    </tr>
+                    @if (ViewBag.TopProducts != null)
+                    {
+                        foreach (var p in (IEnumerable<dynamic>)ViewBag.TopProducts)
+                        {
+                            <tr>
+                                <td style="color:var(--text-primary); font-weight:500;">@p.Title</td>
+                                <td>@p.Quantity</td>
+                                <td style="font-weight:600; color:var(--text-primary);">@(((decimal)p.Revenue).ToString("C"))</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="3">No sales data available.</td></tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<h2 style="margin-top:18px">Recent Orders</h2>
+<table class="table">
+    <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th></tr></thead>
+    <tbody>
+    @if (ViewBag.RecentOrders != null)
+    {
+        foreach (var o in (IEnumerable<dynamic>)ViewBag.RecentOrders)
+        {
+            <tr>
+                <td>@o.OrderId</td>
+                <td>@o.CustomerEmail</td>
+                <td>@o.ItemCount</td>
+                <td>@(((decimal)o.TotalAmount).ToString("C"))</td>
+                <td>@(((DateTime)o.CreatedAt).ToString("g"))</td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr><td colspan="5">No recent orders</td></tr>
+    }
+    </tbody>
+</table>

@@ -1,12 +1,23 @@
 @model Marketplace.Models.Order
+
 @{
-    ViewData["Title"] = "Payment Success";
+    ViewData["Title"] = "Payment Confirmation";
 }
 
 <div class="container" style="padding-top:28px;">
-    <h1>Payment Successful</h1>
+    <h1>Payment Confirmation</h1>
+
     <p>Thank you — your order <strong>@Model.Id</strong> has been placed.</p>
-    <p>Total: <strong>$@Model.Total.ToString("F2")</strong></p>
-    <a class="btn btn-primary" href="/Store">Continue Shopping</a>
+    <p>Total: <strong>@Model.Total.ToString("C")</strong></p>
+
+    <h3>Items</h3>
+    <ul>
+        @foreach (var it in Model.Items)
+        {
+            <li>@it.Title x @it.Quantity — @((it.Price * it.Quantity).ToString("C"))</li>
+        }
+    </ul>
+
+    <a class="btn" href="@Url.Action("Index", "Store")">Continue shopping</a>
 </div>
 

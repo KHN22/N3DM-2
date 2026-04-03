@@ -38,18 +38,24 @@
     <div class="card-body">
         <h2 style="font-size:1.125rem; font-weight:600; margin-bottom:16px;">Monthly Revenue</h2>
         <div class="bar-chart-mock">
-            <div class="bar" style="height:40%;"></div>
-            <div class="bar" style="height:55%;"></div>
-            <div class="bar" style="height:45%;"></div>
-            <div class="bar" style="height:65%;"></div>
-            <div class="bar" style="height:50%;"></div>
-            <div class="bar" style="height:72%;"></div>
-            <div class="bar" style="height:60%;"></div>
-            <div class="bar" style="height:80%;"></div>
-            <div class="bar" style="height:68%;"></div>
-            <div class="bar" style="height:90%;"></div>
-            <div class="bar" style="height:85%;"></div>
-            <div class="bar" style="height:100%;"></div>
+            @if (Model?.MonthlySales != null && Model.MonthlySales.Count > 0)
+            {
+                var max = Model.MonthlySales.Max();
+                for (int i = 0; i < Model.MonthlySales.Count; i++)
+                {
+                    var v = Model.MonthlySales[i];
+                    var h = max == 0 ? 2 : (int)Math.Max(2, (v / (double)max) * 100);
+                    <div class="bar" style="height:@h%; position:relative;">
+                        <span style="position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-size:0.75rem; color:var(--text-muted);">@((v).ToString("C"))</span>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="bar" style="height:40%;"></div>
+                <div class="bar" style="height:55%;"></div>
+                <div class="bar" style="height:45%;"></div>
+            }
         </div>
         <div style="display:flex; justify-content:space-between; padding:8px 20px 0; font-size:0.75rem; color:var(--text-muted);">
             <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
