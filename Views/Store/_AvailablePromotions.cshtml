@@ -1,0 +1,29 @@
+@model Marketplace.Models.AvailablePromotionsViewModel
+
+<div class="available-promotions">
+    @if (Model.Promotions == null || !Model.Promotions.Any())
+    {
+        <div>No promotions available for this order.</div>
+    }
+    else
+    {
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;">
+            @foreach (var p in Model.Promotions)
+            {
+                <li style="border:1px solid #ddd;padding:12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <strong>@p.Name</strong>
+                        <div style="font-size:0.9em;color:#555;">@p.Type.ToString() @if(p.Type==N3DMMarket.Models.Db.PromotionType.Percentage){<text>- @p.Value% off</text>} else if(p.Type==N3DMMarket.Models.Db.PromotionType.FixedAmount){<text>- @p.Value.ToString("C")</text>}</div>
+                    </div>
+                    <div>
+                        <form method="post" action="@Url.Action("ApplyPromotion", "Store")" style="display:inline">
+                            <input type="hidden" name="promotionId" value="@p.Id" />
+                            <input type="hidden" name="orderId" value="@Model.OrderId" />
+                            <button class="btn" type="submit">Apply</button>
+                        </form>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+</div>

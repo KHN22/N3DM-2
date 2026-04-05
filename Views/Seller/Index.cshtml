@@ -255,198 +255,111 @@
 
     @* ── Recent Orders Table ── *@
     <div class="dashboard-section">
-        <div class="section-header-flex">
-            <h2>Recent Orders</h2>
-            <a href="@Url.Action("Orders", "Seller")" class="btn btn-ghost btn-sm">
-                View All Orders
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
-                </svg>
-            </a>
+        <div class="recent-orders-header">
+            <h3>Recent Orders</h3>
+            <a href="@Url.Action("Orders", "Seller")" class="view-all-btn">View All Orders →</a>
         </div>
 
-        <div class="card">
-            <div class="table-wrapper">
-                <table class="data-table">
-                    <thead>
+        <table class="recent-orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Buyer</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model?.RecentOrders != null && Model.RecentOrders.Count > 0)
+                {
+                    @foreach (var order in Model.RecentOrders)
+                    {
                         <tr>
-                            <th>Order ID</th>
-                            <th>Product</th>
-                            <th>Buyer</th>
-                            <th>Amount</th>
-                            <th>Your Earnings</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="order-id">#ORD-7842</td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-thumb-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="1.5">
-                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                                        </svg>
-                                    </div>
-                                    Cyberpunk City Pack
-                                </div>
+                            <td class="order-id">#@order.OrderId</td>
+                            <td class="buyer-cell">
+                                <span class="buyer-name">@order.BuyerName</span>
+                                <span class="buyer-email">@order.BuyerEmail</span>
                             </td>
-                            <td>john.doe@email.com</td>
-                            <td class="amount">$49.99</td>
-                            <td class="earnings">$42.49</td>
-                            <td>Mar 28, 2026</td>
-                            <td><span class="badge badge-success">Completed</span></td>
-                        </tr>
-                        <tr>
-                            <td class="order-id">#ORD-7841</td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-thumb-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="1.5">
-                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                                        </svg>
-                                    </div>
-                                    Medieval Castle Kit
-                                </div>
+                            <td class="amount-cell">$@order.Amount.ToString("F2")</td>
+                            <td class="status-cell">
+                                <span class="status-badge @(order.Status == "Completed" ? "completed" : order.Status == "Pending" ? "pending" : "disputed")">@order.Status</span>
                             </td>
-                            <td>sarah.m@company.io</td>
-                            <td class="amount">$79.00</td>
-                            <td class="earnings">$67.15</td>
-                            <td>Mar 27, 2026</td>
-                            <td><span class="badge badge-success">Completed</span></td>
+                            <td>@order.CreatedDate.ToString("MMM dd, yyyy")</td>
                         </tr>
-                        <tr>
-                            <td class="order-id">#ORD-7840</td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-thumb-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="1.5">
-                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                                        </svg>
-                                    </div>
-                                    Sci-Fi Vehicle Bundle
-                                </div>
-                            </td>
-                            <td>mark.wilson@dev.co</td>
-                            <td class="amount">$129.00</td>
-                            <td class="earnings">$109.65</td>
-                            <td>Mar 26, 2026</td>
-                            <td><span class="badge badge-warning">Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td class="order-id">#ORD-7839</td>
-                            <td>
-                                <div class="product-cell">
-                                    <div class="product-thumb-sm">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                             stroke="currentColor" stroke-width="1.5">
-                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                                        </svg>
-                                    </div>
-                                    Nature Environment
-                                </div>
-                            </td>
-                            <td>emma.j@studio.net</td>
-                            <td class="amount">$34.99</td>
-                            <td class="earnings">$29.74</td>
-                            <td>Mar 25, 2026</td>
-                            <td><span class="badge badge-success">Completed</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" style="padding: 20px; text-align: center; color: var(--text-muted);">No recent orders yet</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 
-    @* ── Top Products ── *@
+    @* ── Recent Products ── *@
     <div class="dashboard-section">
-        <div class="section-header-flex">
-            <h2>Top Performing Products</h2>
-            <a href="@Url.Action("Products", "Seller")" class="btn btn-ghost btn-sm">
-                Manage Products
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="9 18 15 12 9 6"/>
-                </svg>
-            </a>
+        <div class="recent-orders-header">
+            <h3>Recently Added Products</h3>
+            <a href="@Url.Action("Create", "Seller")" class="view-all-btn">Add New Product →</a>
         </div>
 
-        <div class="top-products-grid">
-            <div class="top-product-card">
-                <div class="tp-rank">#1</div>
-                <div class="tp-thumb">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="1.5">
+        <div class="recent-products">
+            <div class="product-card-compact">
+                <div class="product-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="width: 60px; height: 60px;">
                         <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
                     </svg>
                 </div>
-                <div class="tp-info">
-                    <h4>Cyberpunk City Pack</h4>
-                    <p>Characters &amp; Creatures</p>
-                </div>
-                <div class="tp-stats">
-                    <div class="tp-stat">
-                        <span class="tp-stat-value">324</span>
-                        <span class="tp-stat-label">Sales</span>
-                    </div>
-                    <div class="tp-stat">
-                        <span class="tp-stat-value">$16,189</span>
-                        <span class="tp-stat-label">Revenue</span>
-                    </div>
-                </div>
+                <div class="product-name">Cyberpunk City Pack</div>
+                <div class="product-price">$49.99</div>
+                <div class="product-status">Active • 324 sales</div>
             </div>
 
-            <div class="top-product-card">
-                <div class="tp-rank">#2</div>
-                <div class="tp-thumb">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="1.5">
+            <div class="product-card-compact">
+                <div class="product-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="width: 60px; height: 60px;">
                         <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
                     </svg>
                 </div>
-                <div class="tp-info">
-                    <h4>Medieval Castle Kit</h4>
-                    <p>Architecture</p>
-                </div>
-                <div class="tp-stats">
-                    <div class="tp-stat">
-                        <span class="tp-stat-value">186</span>
-                        <span class="tp-stat-label">Sales</span>
-                    </div>
-                    <div class="tp-stat">
-                        <span class="tp-stat-value">$14,694</span>
-                        <span class="tp-stat-label">Revenue</span>
-                    </div>
-                </div>
+                <div class="product-name">Medieval Castle Kit</div>
+                <div class="product-price">$79.00</div>
+                <div class="product-status">Active • 186 sales</div>
             </div>
 
-            <div class="top-product-card">
-                <div class="tp-rank">#3</div>
-                <div class="tp-thumb">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="1.5">
+            <div class="product-card-compact">
+                <div class="product-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); display: flex; align-items: center; justify-content: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="width: 60px; height: 60px;">
                         <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
                     </svg>
                 </div>
-                <div class="tp-info">
-                    <h4>Sci-Fi Vehicle Bundle</h4>
-                    <p>Vehicles</p>
+                <div class="product-name">Sci-Fi Vehicle Bundle</div>
+                <div class="product-price">$129.00</div>
+                <div class="product-status">Active • 142 sales</div>
+            </div>
+
+            <div class="product-card-compact">
+                <div class="product-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); display: flex; align-items: center; justify-content: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="width: 60px; height: 60px;">
+                        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                    </svg>
                 </div>
-                <div class="tp-stats">
-                    <div class="tp-stat">
-                        <span class="tp-stat-value">142</span>
-                        <span class="tp-stat-label">Sales</span>
-                    </div>
-                    <div class="tp-stat">
-                        <span class="tp-stat-value">$18,318</span>
-                        <span class="tp-stat-label">Revenue</span>
-                    </div>
+                <div class="product-name">Nature Environment</div>
+                <div class="product-price">$34.99</div>
+                <div class="product-status">Active • 98 sales</div>
+            </div>
+
+            <div class="product-card-compact">
+                <div class="product-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); display: flex; align-items: center; justify-content: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" style="width: 60px; height: 60px;">
+                        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                    </svg>
                 </div>
+                <div class="product-name">Urban Texture Pack</div>
+                <div class="product-price">$24.99</div>
+                <div class="product-status">Active • 67 sales</div>
             </div>
         </div>
     </div>

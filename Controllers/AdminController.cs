@@ -268,5 +268,176 @@ namespace Marketplace.Controllers
             _db.SaveChanges();
             return RedirectToAction("Roles");
         }
+
+        // GET: /Admin/Promotions
+        public IActionResult Promotions()
+        {
+            var promos = _db.Promotions.OrderByDescending(p => p.CreatedAt).ToList();
+            return View(promos);
+        }
+
+        // GET: /Admin/PromotionLogs
+        public IActionResult PromotionLogs()
+        {
+            try
+            {
+                var file = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "logs", "promotion_debug.log");
+                if (!System.IO.File.Exists(file)) return Content("No promotion logs found.", "text/plain");
+                var txt = System.IO.File.ReadAllText(file);
+                return Content(txt, "text/plain");
+            }
+            catch (Exception ex)
+            {
+                return Content("Failed to read logs: " + ex.GetBaseException().Message, "text/plain");
+            }
+        }
+
+        // GET: /Admin/CreatePromotion
+        public IActionResult CreatePromotion()
+        {
+            var vm = new Promotion();
+            return View(vm);
+        }
+
+        // POST: /Admin/CreatePromotion
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreatePromotion(Promotion model)
+        {
+            try
+            {
+                var logPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "logs");
+                System.IO.Directory.CreateDirectory(logPath);
+                var file = System.IO.Path.Combine(logPath, "promotion_debug.log");
+                using (var sw = System.IO.File.AppendText(file))
+                {
+                    sw.WriteLine($"[{DateTime.UtcNow:O}] CreatePromotion POST called");
+                    if (model == null)
+                    {
+                        sw.WriteLine("Model: null");
+                    }
+                    else
+                    {
+                        sw.WriteLine($"Model: Name={model.Name}, Code={model.Code}, Type={model.Type}, Value={model.Value}, MinOrderAmount={model.MinOrderAmount}, MaxUses={model.MaxUses}, MaxUsesPerUser={model.MaxUsesPerUser}, AppliesTo={model.AppliesTo}, IsActive={model.IsActive}, StartDate={model.StartDate}, EndDate={model.EndDate}");
+                    }
+                    if (!ModelState.IsValid)
+                    {
+                        sw.WriteLine("ModelState invalid:");
+                        foreach (var kv in ModelState)
+                        {
+                            if (kv.Value.Errors.Count > 0)
+                            {
+                                foreach (var err in kv.Value.Errors)
+                                {
+                                    sw.WriteLine($" - {kv.Key}: {err.ErrorMessage} ({err.Exception?.Message})");
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (model == null) return BadRequest();
+                if (string.IsNullOrWhiteSpace(model.Name))
+                {
+                    ModelState.AddModelError(nameof(model.Name), "Name is required.");
+                }
+                if (!ModelState.IsValid)
+                {
+                    TempData["Error"] = "Validation failed. See logs/promotion_debug.log for details.";
+                    return View(model);
+                }
+
+                _db.Promotions.Add(model);
+                _db.SaveChanges();
+                TempData["Success"] = "Promotion created successfully.";
+                return RedirectToAction("Promotions");
+            }
+                catch (Exception ex)
+            {
+                var msg = ex.GetBaseException().Message;
+                try
+                {
+                        var file = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "logs", "promotion_debug.log");
+                    using (var sw = System.IO.File.AppendText(file))
+                    {
+                        sw.WriteLine($"[{DateTime.UtcNow:O}] Exception: {ex}");
+                    }
+                }
+                catch { }
+                ModelState.AddModelError(string.Empty, msg);
+                TempData["Error"] = "Failed to create promotion: " + msg + " (see logs/promotion_debug.log)";
+                return View(model);
+            }
+        }
+
+        // GET: /Admin/EditPromotion/5
+        public IActionResult EditPromotion(int id)
+        {
+            var promo = _db.Promotions.FirstOrDefault(p => p.Id == id);
+            if (promo == null) return NotFound();
+            return View(promo);
+        }
+
+        // POST: /Admin/EditPromotion
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditPromotion(Promotion model)
+        {
+            if (!ModelState.IsValid) return View(model);
+            var promo = _db.Promotions.FirstOrDefault(p => p.Id == model.Id);
+            if (promo == null) return NotFound();
+            promo.Name = model.Name;
+            promo.Code = model.Code;
+            promo.Type = model.Type;
+            promo.Value = model.Value;
+            promo.MinOrderAmount = model.MinOrderAmount;
+            promo.StartDate = model.StartDate;
+            promo.EndDate = model.EndDate;
+            promo.IsActive = model.IsActive;
+            promo.Metadata = model.Metadata;
+            _db.SaveChanges();
+            TempData["Success"] = "Promotion updated successfully.";
+            return RedirectToAction("Promotions");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePromotion(int id)
+        {
+            var promo = _db.Promotions.FirstOrDefault(p => p.Id == id);
+            if (promo == null) return NotFound();
+            _db.Promotions.Remove(promo);
+            _db.SaveChanges();
+            TempData["Success"] = "Promotion deleted.";
+            return RedirectToAction("Promotions");
+        }
+
+        // GET: /Admin/Products
+        public IActionResult Products()
+        {
+            var products = _db.Products.Include(p => p.Seller).OrderByDescending(p => p.CreatedAt).ToList();
+            return View(products);
+        }
+
+        // POST: /Admin/DeleteProduct
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = _db.Products.FirstOrDefault(p => p.ProductId == id);
+            if (product == null) return NotFound();
+
+            // Delete associated OrderItems first (foreign key constraint)
+            var orderItems = _db.OrderItems.Where(oi => oi.ProductId == id).ToList();
+            foreach (var item in orderItems)
+            {
+                _db.OrderItems.Remove(item);
+            }
+
+            _db.Products.Remove(product);
+            _db.SaveChanges();
+            TempData["Success"] = "Product deleted successfully.";
+            return RedirectToAction("Products");
+        }
     }
 }

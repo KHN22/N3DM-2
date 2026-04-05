@@ -54,6 +54,25 @@ namespace Marketplace.Controllers
             var totalViews = 0;
             var conversionRate = 0m;
 
+            // Fetch recent orders for this seller
+            var recentOrders = _db.OrderItems
+                .Include(oi => oi.Order)
+                .Include(oi => oi.Product)
+                .Where(oi => oi.Product.SellerId == sellerId)
+                .OrderByDescending(oi => oi.Order.CreatedAt)
+                .Take(4)
+                .GroupBy(oi => oi.OrderId)
+                .Select(g => new RecentOrderRow
+                {
+                    OrderId = g.Key.ToString(),
+                    BuyerEmail = g.First().Order.CustomerEmail,
+                    BuyerName = g.First().Order.CustomerEmail.Split('@')[0],
+                    Amount = g.Sum(oi => oi.LineTotal),
+                    Status = g.First().Order.PaymentStatus ?? "Completed",
+                    CreatedDate = g.First().Order.CreatedAt
+                })
+                .ToList();
+
             var dashboard = new SellerDashboardViewModel
             {
                 TotalEarnings = totalEarnings,
@@ -62,7 +81,8 @@ namespace Marketplace.Controllers
                 TotalProducts = totalProducts,
                 ActiveProducts = activeProducts,
                 TotalViews = totalViews,
-                ConversionRate = conversionRate
+                ConversionRate = conversionRate,
+                RecentOrders = recentOrders
             };
 
             return View(dashboard);
@@ -90,7 +110,8 @@ namespace Marketplace.Controllers
                     Views = 0,
                     Revenue = _db.OrderItems.Where(oi => oi.ProductId == p.ProductId).Sum(oi => (decimal?)oi.LineTotal) ?? 0m,
                     Status = p.IsPublished ? "Active" : "Draft",
-                    CreatedDate = p.CreatedAt
+                    CreatedDate = p.CreatedAt,
+                    ThumbnailUrl = p.ThumbnailUrl
                 })
                 .OrderByDescending(p => p.CreatedDate)
                 .ToList();
@@ -264,6 +285,13 @@ namespace Marketplace.Controllers
             var product = _db.Products.FirstOrDefault(p => p.ProductId == id && p.SellerId == user.UserId);
             if (product == null) return NotFound();
 
+            // Delete associated OrderItems first (foreign key constraint)
+            var orderItems = _db.OrderItems.Where(oi => oi.ProductId == id).ToList();
+            foreach (var item in orderItems)
+            {
+                _db.OrderItems.Remove(item);
+            }
+
             _db.Products.Remove(product);
             _db.SaveChanges();
 
@@ -338,6 +366,45 @@ namespace Marketplace.Controllers
                 .Where(oi => oi.Product.SellerId == sellerId)
                 .Sum(oi => (decimal?)oi.LineTotal) ?? 0m;
 
+            // Fetch payout history (simulated with recent completed orders)
+            var payoutHistory = _db.Orders
+                .Where(o => o.OrderItems.Any(oi => oi.Product.SellerId == sellerId) && o.PaymentStatus == "Completed")
+                .OrderByDescending(o => o.CreatedAt)
+                .Take(5)
+                .Select(o => new PayoutHistoryRow
+                {
+                    PayoutId = "PAY-" + o.OrderId.ToString().Substring(Math.Max(0, o.OrderId.ToString().Length - 4)),
+                    Amount = o.OrderItems.Where(oi => oi.Product.SellerId == sellerId).Sum(oi => oi.LineTotal),
+                    Method = "PayPal",
+                    RequestedDate = o.CreatedAt,
+                    ProcessedDate = o.CreatedAt.AddDays(2),
+                    Status = "Completed"
+                })
+                .ToList();
+
+            // Fetch top earning products
+            var topProducts = _db.OrderItems
+                .Include(oi => oi.Product)
+                .Where(oi => oi.Product.SellerId == sellerId)
+                .GroupBy(oi => oi.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    Sales = g.Sum(oi => oi.Quantity),
+                    Revenue = g.Sum(oi => oi.LineTotal),
+                    Title = g.First().Product.Title
+                })
+                .OrderByDescending(x => x.Revenue)
+                .Take(3)
+                .Select(x => new TopProductRow
+                {
+                    ProductId = x.ProductId,
+                    Title = x.Title,
+                    Sales = x.Sales,
+                    Revenue = x.Revenue
+                })
+                .ToList();
+
             var earnings = new SellerEarningsViewModel
             {
                 TotalEarnings = totalEarnings,
@@ -346,7 +413,9 @@ namespace Marketplace.Controllers
                 LifetimeEarnings = lifetime,
                 CommissionRate = 15m,
                 PayoutMethod = user.Email ?? string.Empty,
-                PayoutAccount = user.Email ?? string.Empty
+                PayoutAccount = user.Email ?? string.Empty,
+                PayoutHistory = payoutHistory,
+                TopEarningProducts = topProducts
             };
 
             return View(earnings);

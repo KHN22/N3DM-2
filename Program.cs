@@ -72,5 +72,35 @@ using (var scope = app.Services.CreateScope())
         // swallowing exceptions here because seeding should not crash the app during startup
     }
 }
+// Seed admin user for testing if missing
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ThreedmContext>();
+    try
+    {
+        var adminEmail = "admin@gmail.com";
+        if (!context.Users.Any(u => u.Email.ToUpper() == adminEmail.ToUpper()))
+        {
+            var adminRole = context.Roles.FirstOrDefault(r => r.RoleName == "Admin");
+            if (adminRole != null)
+            {
+                var user = new N3DMMarket.Models.Db.User
+                {
+                    FullName = "Administrator",
+                    Email = adminEmail,
+                    Password = "admin123",
+                    RoleId = adminRole.RoleId,
+                    CreatedDate = DateTime.UtcNow,
+                    IsActive = true
+                };
+                context.Users.Add(user);
+                context.SaveChanges();
+            }
+        }
+    }
+    catch
+    {
+    }
+}
 
 app.Run();

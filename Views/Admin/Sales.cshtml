@@ -92,26 +92,43 @@
     </div>
 </div>
 
-<h2 style="margin-top:18px">Recent Orders</h2>
-<table class="table">
-    <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th></tr></thead>
-    <tbody>
-    @if (ViewBag.RecentOrders != null)
-    {
-        foreach (var o in (IEnumerable<dynamic>)ViewBag.RecentOrders)
-        {
-            <tr>
-                <td>@o.OrderId</td>
-                <td>@o.CustomerEmail</td>
-                <td>@o.ItemCount</td>
-                <td>@(((decimal)o.TotalAmount).ToString("C"))</td>
-                <td>@(((DateTime)o.CreatedAt).ToString("g"))</td>
-            </tr>
-        }
-    }
-    else
-    {
-        <tr><td colspan="5">No recent orders</td></tr>
-    }
-    </tbody>
-</table>
+<h2 style="margin-top:32px; margin-bottom:16px">Recent Orders</h2>
+<div class="card">
+    <div class="card-body">
+        <table class="recent-orders-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.RecentOrders != null)
+                {
+                    foreach (var o in (IEnumerable<dynamic>)ViewBag.RecentOrders)
+                    {
+                        <tr>
+                            <td class="order-id">@o.OrderId</td>
+                            <td class="buyer-cell">
+                                <span class="buyer-name">@o.CustomerEmail</span>
+                                <span class="buyer-email">@o.ItemCount items</span>
+                            </td>
+                            <td class="amount-cell">@(((decimal)o.TotalAmount).ToString("C"))</td>
+                            <td class="status-cell">
+                                <span class="status-badge completed">Completed</span>
+                            </td>
+                            <td>@(((DateTime)o.CreatedAt).ToString("MMM dd, yyyy"))</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="5" style="padding: 20px; text-align: center; color: var(--text-muted);">No recent orders</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

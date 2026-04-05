@@ -26,6 +26,7 @@ namespace Marketplace.Controllers
 
         // POST: /Account/Login
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -34,15 +35,21 @@ namespace Marketplace.Controllers
             try
             {
                 var normalizedEmail = (model.Email ?? string.Empty).Trim().ToUpper();
-                var password = model.Password ?? string.Empty;
+                var password = (model.Password ?? string.Empty).Trim();
+                
+                _logger.LogInformation("Login attempt for email: {Email}", model.Email);
+                
                 var user = _context.Users
                     .FirstOrDefault(u => u.Email.ToUpper() == normalizedEmail && u.Password == password);
+                
                 if (user == null)
                 {
+                    _logger.LogWarning("Failed login attempt for email: {Email} - user not found or password mismatch", model.Email);
                     ModelState.AddModelError(string.Empty, "Invalid email or password");
                     return View(model);
                 }
 
+                _logger.LogInformation("Successful login for email: {Email}", model.Email);
                 HttpContext.Session.SetString("CurrentUserEmail", user.Email);
                 return RedirectToAction("Index", "Profile");
             }

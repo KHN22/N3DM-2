@@ -1,0 +1,8 @@
+[2026-04-04T20:11:29.5036214Z] CreatePromotion POST called
+Model: Name=YYY, Code=YYY123, Type=Percentage, Value=111, MinOrderAmount=111, MaxUses=111, MaxUsesPerUser=111, AppliesTo=All, IsActive=True, StartDate=, EndDate=
+ModelState invalid:
+ - IsActive: The value 'on' is not valid for IsActive. ()
+[2026-04-04T20:11:50.4007920Z] CreatePromotion POST called
+Model: Name=YYY, Code=YYY123, Type=Percentage, Value=111, MinOrderAmount=111, MaxUses=111, MaxUsesPerUser=111, AppliesTo=All, IsActive=True, StartDate=01-Jan-26 1:01:00 AM, EndDate=02-May-26 1:01:00 AM
+ModelState invalid:
+ - IsActive: The value 'on' is not valid for IsActive. ()

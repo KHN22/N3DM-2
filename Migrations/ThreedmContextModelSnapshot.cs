@@ -137,6 +137,98 @@ namespace N3DMMarket.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("N3DMMarket.Models.Db.Promotion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppliesTo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int?>("MaxUses")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaxUsesPerUser")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Metadata")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("MinOrderAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Promotions");
+                });
+
+            modelBuilder.Entity("N3DMMarket.Models.Db.PromotionRedemption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AmountApplied")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RedeemedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("PromotionId");
+
+                    b.ToTable("PromotionRedemptions");
+                });
+
             modelBuilder.Entity("N3DMMarket.Models.Db.Role", b =>
                 {
                     b.Property<int>("RoleId")
@@ -192,6 +284,9 @@ namespace N3DMMarket.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("ProfileImagePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
@@ -243,6 +338,24 @@ namespace N3DMMarket.Migrations
                     b.Navigation("Seller");
                 });
 
+            modelBuilder.Entity("N3DMMarket.Models.Db.PromotionRedemption", b =>
+                {
+                    b.HasOne("N3DMMarket.Models.Db.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .HasConstraintName("FK_PromotionRedemptions_Orders_OrderId");
+
+                    b.HasOne("N3DMMarket.Models.Db.Promotion", "Promotion")
+                        .WithMany("Redemptions")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Promotion");
+                });
+
             modelBuilder.Entity("N3DMMarket.Models.Db.User", b =>
                 {
                     b.HasOne("N3DMMarket.Models.Db.Role", "Role")
@@ -262,6 +375,11 @@ namespace N3DMMarket.Migrations
             modelBuilder.Entity("N3DMMarket.Models.Db.Product", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("N3DMMarket.Models.Db.Promotion", b =>
+                {
+                    b.Navigation("Redemptions");
                 });
 
             modelBuilder.Entity("N3DMMarket.Models.Db.Role", b =>

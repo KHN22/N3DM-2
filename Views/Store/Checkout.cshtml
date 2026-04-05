@@ -2,29 +2,84 @@
 
 @{
     ViewData["Title"] = "Checkout";
+    var userEmail = Context.Session.GetString("CurrentUserEmail");
+    var isLoggedIn = !string.IsNullOrEmpty(userEmail);
 }
 
-<div class="container" style="padding-top:28px;">
-    <h1>Checkout</h1>
-    <p>Confirm your items and provide an email to receive a receipt.</p>
+<div class="container page-checkout" style="padding-top:28px;">
+    @if (!isLoggedIn)
+    {
+        <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:10px; padding:24px; text-align:center; margin-bottom:24px;">
+            <h2 style="margin-top:0; color:var(--accent-danger);">Login Required</h2>
+            <p style="color:var(--text-muted); margin-bottom:16px;">You must be logged in to complete your purchase. Please log in or create an account to continue.</p>
+            <a href="@Url.Action("Login", "Account")" class="btn btn-primary" style="display:inline-flex; padding:10px 20px; margin-right:12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                    <polyline points="10 17 15 12 10 7"/>
+                </svg>
+                Login
+            </a>
+            <a href="@Url.Action("Register", "Account")" class="btn btn-outline" style="display:inline-flex; padding:10px 20px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="8.5" cy="7" r="4"/>
+                    <line x1="20" y1="8" x2="20" y2="14"/>
+                    <line x1="23" y1="11" x2="17" y2="11"/>
+                </svg>
+                Create Account
+            </a>
+        </div>
+        <style>
+            form { display: none; }
+            .data-table { display: none; }
+        </style>
+    }
+    else
+    {
+        <h1>Checkout</h1>
+        <p>Confirm your items and provide an email to receive a receipt.</p>
 
-    <table class="table">
-        <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Subtotal</th></tr></thead>
-        <tbody>
-        @foreach(var item in Model)
-        {
-            <tr>
-                <td>@item.Title</td>
-                <td>$@item.Price.ToString("F2")</td>
-                <td>@item.Quantity</td>
-                <td>$@((item.Price * item.Quantity).ToString("F2"))</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+        <div class="card" style="margin-bottom:20px;">
+        <div style="overflow-x:auto;">
+            <table class="data-table" style="margin-bottom:0;">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td style="color:var(--text-primary); font-weight:500;">@item.Title</td>
+                            <td>$@item.Price.ToString("F2")</td>
+                            <td style="text-align:center;">@item.Quantity</td>
+                            <td style="color:var(--accent-success); font-weight:600;">$@((item.Price * item.Quantity).ToString("F2"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <form asp-action="CheckoutConfirm" method="post">
-        <label>Email (optional): <input type="email" name="customerEmail" /></label>
-        <button class="btn btn-primary">Confirm and Pay</button>
+    <form asp-action="CheckoutConfirm" method="post" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:24px;">
+        <h3 style="margin-top:0; margin-bottom:16px;">Order Details</h3>
+        <div style="margin-bottom:16px;">
+            <label style="display:block; margin-bottom:6px; font-weight:500; font-size:0.875rem;">Email Address (optional)</label>
+            <input type="email" name="customerEmail" placeholder="your@email.com" style="width:100%; max-width:400px; padding:10px 12px; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-input); color:var(--text-primary); font-size:0.875rem;" />
+        </div>
+        <div style="display:flex; gap:12px;">
+            <button class="btn btn-primary" type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; margin-right:6px;">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                Confirm and Pay
+            </button>
+            <a href="@Url.Action("Index", "Store")" class="btn btn-outline">Cancel</a>
+        </div>
     </form>
+    }
 </div>

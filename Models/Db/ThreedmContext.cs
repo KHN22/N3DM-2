@@ -21,6 +21,8 @@ public partial class ThreedmContext : DbContext
     public virtual DbSet<Product> Products { get; set; }
     public virtual DbSet<Order> Orders { get; set; }
     public virtual DbSet<OrderItem> OrderItems { get; set; }
+    public virtual DbSet<Promotion> Promotions { get; set; }
+    public virtual DbSet<PromotionRedemption> PromotionRedemptions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -59,6 +61,31 @@ public partial class ThreedmContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Users__RoleId__4222D4EF");
+        });
+
+        modelBuilder.Entity<Promotion>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.Value).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.MinOrderAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.Metadata).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+        });
+
+        modelBuilder.Entity<PromotionRedemption>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.AmountApplied).HasColumnType("decimal(18,2)");
+            entity.HasOne(e => e.Promotion)
+                .WithMany(p => p.Redemptions)
+                .HasForeignKey(e => e.PromotionId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Order)
+                .WithMany()
+                .HasForeignKey(e => e.OrderId)
+                .HasConstraintName("FK_PromotionRedemptions_Orders_OrderId");
         });
 
         

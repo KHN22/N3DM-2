@@ -127,38 +127,27 @@
                 <h3>Top Earning Products</h3>
             </div>
             <div class="top-earners-list">
-                <div class="top-earner-item">
-                    <div class="earner-rank">#1</div>
-                    <div class="earner-info">
-                        <span class="earner-name">Sci-Fi Vehicle Bundle</span>
-                        <span class="earner-sales">142 sales</span>
+                @if (Model?.TopEarningProducts != null && Model.TopEarningProducts.Count > 0)
+                {
+                    for (int i = 0; i < Model.TopEarningProducts.Count; i++)
+                    {
+                        var product = Model.TopEarningProducts[i];
+                        <div class="top-earner-item">
+                            <div class="earner-rank">#@(i + 1)</div>
+                            <div class="earner-info">
+                                <span class="earner-name">@(product.Title.Length > 30 ? product.Title.Substring(0, 30) + "..." : product.Title)</span>
+                                <span class="earner-sales">@product.Sales.ToString("N0") sales</span>
+                            </div>
+                            <div class="earner-amount">$@product.Revenue.ToString("N2")</div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="padding: 20px; text-align: center; color: var(--text-muted);">
+                        No products sold yet
                     </div>
-                    <div class="earner-amount">$18,318</div>
-                </div>
-                <div class="top-earner-item">
-                    <div class="earner-rank">#2</div>
-                    <div class="earner-info">
-                        <span class="earner-name">Cyberpunk City Pack</span>
-                        <span class="earner-sales">324 sales</span>
-                    </div>
-                    <div class="earner-amount">$16,189</div>
-                </div>
-                <div class="top-earner-item">
-                    <div class="earner-rank">#3</div>
-                    <div class="earner-info">
-                        <span class="earner-name">Medieval Castle Kit</span>
-                        <span class="earner-sales">186 sales</span>
-                    </div>
-                    <div class="earner-amount">$14,694</div>
-                </div>
-                <div class="top-earner-item">
-                    <div class="earner-rank">#4</div>
-                    <div class="earner-info">
-                        <span class="earner-name">Nature Environment</span>
-                        <span class="earner-sales">98 sales</span>
-                    </div>
-                    <div class="earner-amount">$3,429</div>
-                </div>
+                }
             </div>
         </div>
     </div>

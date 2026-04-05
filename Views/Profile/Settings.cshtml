@@ -3,10 +3,19 @@
     ViewData["ActivePage"] = "Profile";
 }
 
-<div class="container" style="padding-top:32px; padding-bottom:60px;">
+<div class="container page-profile-settings" style="padding-top:32px; padding-bottom:60px;">
 
     <h1 style="font-size:1.5rem; font-weight:700; margin-bottom:4px;">Account Settings</h1>
     <p class="text-muted" style="margin-bottom:24px;">Manage your account preferences and security</p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="margin-bottom:24px;">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" style="margin-bottom:24px;">@TempData["Error"]</div>
+    }
 
     <div class="settings-grid">
 
@@ -42,27 +51,28 @@
             <h2>Change Password</h2>
             <p class="settings-desc">Update your password to keep your account secure</p>
 
-            <form class="settings-form" method="post">
+            <form class="settings-form" asp-action="Settings" asp-controller="Profile" method="post">
+                @Html.AntiForgeryToken()
                 <div class="form-group">
-                    <label class="form-label" for="currentPassword">Current Password</label>
-                    <input class="form-input" type="password" id="currentPassword"
-                           name="CurrentPassword" placeholder="Enter current password" />
+                    <label class="form-label" for="CurrentPassword">Current Password</label>
+                    <input class="form-input" type="password" id="CurrentPassword"
+                           name="CurrentPassword" placeholder="Enter current password" required />
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="newPassword">New Password</label>
-                        <input class="form-input" type="password" id="newPassword"
-                               name="NewPassword" placeholder="Min. 8 characters" />
+                        <label class="form-label" for="NewPassword">New Password</label>
+                        <input class="form-input" type="password" id="NewPassword"
+                               name="NewPassword" placeholder="Min. 6 characters" required />
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="confirmNew">Confirm New Password</label>
-                        <input class="form-input" type="password" id="confirmNew"
-                               name="ConfirmNewPassword" placeholder="Repeat new password" />
+                        <label class="form-label" for="ConfirmNewPassword">Confirm New Password</label>
+                        <input class="form-input" type="password" id="ConfirmNewPassword"
+                               name="ConfirmNewPassword" placeholder="Repeat new password" required />
                     </div>
                 </div>
 
                 <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
-                    <button class="btn btn-secondary" type="button">Cancel</button>
+                    <button class="btn btn-secondary" type="button" onclick="history.back()">Cancel</button>
                     <button class="btn btn-primary" type="submit">Update Password</button>
                 </div>
             </form>

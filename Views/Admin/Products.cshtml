@@ -1,0 +1,103 @@
+@model List<N3DMMarket.Models.Db.Product>
+@{
+    ViewData["Title"] = "Product Management";
+    ViewData["ActivePage"] = "Admin";
+    ViewData["AdminPage"] = "Products";
+    Layout = "_AdminLayout";
+}
+
+<h1>Product Management</h1>
+<p class="page-desc">Review and manage all products on the platform. Delete illegal or problematic products.</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="card">
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Product ID</th>
+                    <th>Title</th>
+                    <th>Seller</th>
+                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Stock</th>
+                    <th>Published</th>
+                    <th>Created</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>#@product.ProductId</td>
+                            <td>
+                                <span title="@product.Title">@(product.Title.Length > 40 ? product.Title.Substring(0, 40) + "..." : product.Title)</span>
+                            </td>
+                            <td>
+                                @if (product.Seller != null)
+                                {
+                                    <span>@product.Seller.FullName</span><br/>
+                                    <small style="color: #888;">@product.Seller.Email</small>
+                                }
+                                else
+                                {
+                                    <span style="color: #999;">Unknown Seller</span>
+                                }
+                            </td>
+                            <td>$@product.Price.ToString("F2")</td>
+                            <td>@(string.IsNullOrWhiteSpace(product.Category) ? "—" : product.Category)</td>
+                            <td>@product.Stock</td>
+                            <td>
+                                <span class="status-badge @(product.IsPublished ? "completed" : "pending")">
+                                    @(product.IsPublished ? "Published" : "Unpublished")
+                                </span>
+                            </td>
+                            <td>@product.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            <td style="text-align:right;">
+                                <form method="post" action="@Url.Action("DeleteProduct","Admin")" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@product.ProductId" />
+                                    <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('Delete this product? This action cannot be undone.');">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="9" style="text-align:center; padding: 20px;">No products found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.status-badge.completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+.status-badge.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+</style>

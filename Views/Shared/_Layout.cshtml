@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ModelVault</title>
+    <title>@ViewData["Title"] - 3DM</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,6 +25,8 @@
 @{
     // determine current user's role for UI decisions
     string currentRole = string.Empty;
+    string profileImagePath = string.Empty;
+    string avatarInitials = "U";
     try
     {
         var email = Context.Session.GetString("CurrentUserEmail");
@@ -39,6 +41,17 @@
                 {
                     var u = db.Users.Include(u => u.Role).FirstOrDefault(u => u.Email.ToUpper() == normalized);
                     currentRole = u?.Role?.RoleName ?? string.Empty;
+                    profileImagePath = u?.ProfileImagePath ?? string.Empty;
+                    
+                    // Calculate initials
+                    if (!string.IsNullOrEmpty(u?.FullName))
+                    {
+                        var parts = u.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                        if (parts.Length == 1) 
+                            avatarInitials = parts[0].Substring(0, Math.Min(2, parts[0].Length)).ToUpper();
+                        else if (parts.Length > 1)
+                            avatarInitials = ($"{parts[0][0]}{parts[parts.Length - 1][0]}").ToUpper();
+                    }
                 }
             }
             catch { /* ignore view-time DB errors */ }
@@ -111,7 +124,16 @@
                 <div class="navbar-right">
                     <div class="profile-dropdown">
                         <button class="profile-trigger" aria-haspopup="true" aria-expanded="false">
-                            <div class="profile-avatar">JD</div>
+                            <div class="profile-avatar" id="navbarProfileAvatar">
+                                @if (!string.IsNullOrEmpty(profileImagePath))
+                                {
+                                    <img src="@profileImagePath" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    @avatarInitials
+                                }
+                            </div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6 9 12 15 18 9" />
@@ -176,6 +198,49 @@
     </footer>
 
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Listen for profile image updates (broadcast between tabs/windows)
+        if (typeof BroadcastChannel !== 'undefined') {
+            const profileChannel = new BroadcastChannel('profile-updates');
+            profileChannel.onmessage = function(event) {
+                if (event.data.type === 'image-updated' && event.data.imagePath) {
+                    updateNavbarAvatar(event.data.imagePath);
+                }
+            };
+        }
+
+        // Also check localStorage for updates
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'profileImageUpdated') {
+                const imagePath = localStorage.getItem('profileImagePath');
+                if (imagePath) {
+                    updateNavbarAvatar(imagePath);
+                    localStorage.removeItem('profileImageUpdated');
+                    localStorage.removeItem('profileImagePath');
+                }
+            }
+        });
+
+        function updateNavbarAvatar(imagePath) {
+            const navAvatar = document.getElementById('navbarProfileAvatar');
+            if (navAvatar) {
+                navAvatar.innerHTML = `<img src="${imagePath}?t=${Date.now()}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />`;
+            }
+        }
+
+        // Expose function globally for profile page to call
+        window.broadcastProfileImageUpdate = function(imagePath) {
+            if (typeof BroadcastChannel !== 'undefined') {
+                try {
+                    const profileChannel = new BroadcastChannel('profile-updates');
+                    profileChannel.postMessage({ type: 'image-updated', imagePath: imagePath });
+                } catch (e) { }
+            }
+            // Also use localStorage as fallback
+            localStorage.setItem('profileImagePath', imagePath);
+            localStorage.setItem('profileImageUpdated', new Date().getTime());
+        };
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

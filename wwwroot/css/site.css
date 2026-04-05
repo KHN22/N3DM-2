@@ -357,6 +357,7 @@ img {
     gap: 16px;
 }
 
+
 .stat-card .stat-icon {
     width: 40px;
     height: 40px;
@@ -1197,6 +1198,44 @@ img {
     font-weight: 500;
     color: var(--text-primary);
 }
+
+/* --------------------------------------------------
+   Page-scoped helpers (added for v0 testing)
+   These map to the wrapper classes inserted into views (.page-*)
+   so the v0 stylesheet can style those pages without changing views.
+-------------------------------------------------- */
+.page-product-detail { padding: 28px 24px; }
+.page-product-detail .product-detail { display:flex; gap:18px; align-items:flex-start }
+.page-product-detail .product-detail-info { max-width:680px }
+.page-product-detail .product-price { color: var(--accent-primary); font-size:1.4rem; font-weight:700 }
+
+.page-cart { padding: 28px 24px; }
+.page-cart .table { width:100%; border-collapse:collapse; margin-top:12px }
+.page-cart .table th, .page-cart .table td { padding:10px 8px; border-bottom:1px solid var(--border-color); text-align:left }
+.page-cart .btn-primary { margin-top:12px }
+
+.page-checkout { padding:28px 24px }
+.page-checkout h1 { margin-bottom:6px }
+.page-checkout .table { width:100%; border-collapse:collapse }
+.page-checkout .table th, .page-checkout .table td { padding:10px 8px; border-bottom:1px solid var(--border-color) }
+.page-checkout .form-input { display:inline-block; width:300px; margin-right:12px }
+
+.page-payment { padding:28px 24px }
+.page-payment .component-qr-mock, .page-payment [style*="width:220px"] { border-radius:8px; background:var(--bg-card); border:1px solid var(--border-color) }
+.page-payment .btn.primary, .page-payment .btn-primary { background:var(--accent-primary); color:var(--text-inverse) }
+
+/* PROFILE RULES REMOVED FOR TESTING - original rules preserved below
+.page-profile { padding:24px }
+.page-profile .profile-header-section { display:flex; gap:18px; align-items:center; margin-bottom:16px }
+.page-profile .profile-avatar-lg { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--accent-primary),#0090a8); display:flex; align-items:center; justify-content:center; font-weight:700 }
+.page-profile .settings-grid { display:flex; gap:20px }
+.page-profile .settings-nav { width:220px; display:flex; flex-direction:column; gap:8px }
+.page-profile .settings-panel { flex:1 }
+
+.page-profile-settings { padding:24px }
+.page-profile-settings .settings-panel { background:var(--bg-card); padding:16px; border-radius:10px }
+*/
+
 
 .data-table .earnings,
 .data-table .revenue {
@@ -2203,6 +2242,37 @@ img {
 
 .thumbnail-upload .upload-text {
     text-align: left;
+}
+
+.thumbnail-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    z-index: 10;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.thumbnail-preview img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .preview-images-grid {
@@ -3444,5 +3514,151 @@ img {
 
 /* Small viewport tweak */
 @media (max-width: 640px) {
-    .profile-header-section { flex-direction: column; align-items: flex-start; gap: 12px; }
+        .profile-header-section { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
+
+/* -------------------------- Enhanced page styles (work with actual HTML) -------------------------- */
+
+/* Profile: enhance existing grid layout */
+.page-profile { padding:32px 0 }
+.page-profile .profile-header-section { padding:0 32px 16px; display:flex; gap:24px; align-items:center; border-bottom:1px solid var(--border-color); margin-bottom:20px; }
+.page-profile .profile-avatar-lg { width:88px; height:88px; flex-shrink:0 }
+.page-profile .settings-grid { display:grid; grid-template-columns: 260px 1fr; gap:28px; padding:0 32px }
+.page-profile .settings-nav { display:flex; flex-direction:column; gap:4px; }
+.page-profile .settings-nav a { display:flex; align-items:center; gap:10px; padding:10px 12px; font-size:0.875rem; color:var(--text-secondary); border-radius:8px; border:1px solid transparent; text-decoration:none; transition:all 200ms }
+.page-profile .settings-nav a.active, .page-profile .settings-nav a:hover { color:var(--text-primary); background:rgba(0,200,240,0.05); border-color:rgba(0,200,240,0.1) }
+.page-profile .settings-panel { background:var(--card-bg); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.03) }
+
+/* Profile Settings: similar grid */
+.page-profile-settings { padding:28px 0 }
+.page-profile-settings .settings-grid { display:grid; grid-template-columns: 260px 1fr; gap:28px; padding:0 32px }
+.page-profile-settings .settings-nav { display:flex; flex-direction:column; gap:4px }
+.page-profile-settings .settings-nav a { display:flex; align-items:center; gap:10px; padding:10px 12px; font-size:0.875rem; color:var(--text-secondary); border-radius:8px; text-decoration:none; transition:all 200ms }
+.page-profile-settings .settings-nav a.active { color:var(--accent-primary); background:rgba(0,200,240,0.05) }
+.page-profile-settings .settings-panel { background:var(--card-bg); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.03) }
+.page-profile-settings .settings-panel h2 { margin-top:0; font-size:1.125rem; margin-bottom:4px }
+
+/* Cart: card-like rows instead of table */
+.page-cart { padding:28px }
+.page-cart .table { width:100%; border-collapse:collapse; margin-top:0 }
+.page-cart .table tr { display:grid; grid-template-columns: auto 1fr auto auto auto; gap:12px; padding:12px; border-bottom:1px solid rgba(255,255,255,0.02); align-items:center }
+.page-cart .table th, .page-cart .table td { padding:0; border:none; font-size:0.875rem }
+.page-cart .table th { font-weight:600; color:var(--text-muted) }
+.page-cart .table tbody tr:hover { background:rgba(255,255,255,0.01) }
+
+/* Checkout: keep current style but enhance */
+.page-checkout { padding:28px }
+.page-checkout h1 { margin-bottom:12px }
+.page-checkout .table { width:100%; margin-top:12px; border-collapse:collapse }
+.page-checkout .table th, .page-checkout .table td { padding:10px 8px; border-bottom:1px solid rgba(255,255,255,0.02); text-align:left; font-size:0.875rem }
+
+/* Payment: enhance existing flex layout */
+.page-payment { padding:28px; /* existing inline flex applies */ }
+.page-payment h1 { margin-bottom:12px }
+.page-payment h3 { margin-top:24px; margin-bottom:12px }
+.page-payment .component-qr-mock { border-radius:12px; background:var(--card-bg); border:1px solid rgba(255,255,255,0.03); box-shadow:0 12px 36px rgba(0,0,0,0.45) }
+.page-payment form { padding:12px 0 }
+.page-payment .btn-primary { background:var(--accent-primary); color:var(--text-inverse) }
+
+/* Payment confirmation: centered layout */
+.page-payment-confirmation { display:flex; align-items:center; justify-content:center; min-height:400px; padding:48px 24px }
+.page-payment-confirmation > * { background:var(--card-bg); padding:32px; border-radius:12px; border:1px solid rgba(255,255,255,0.03); max-width:720px; width:100% }
+
+/* Enhanced form elements */
+.form-input, .form-textarea { border-radius:8px; padding:12px 14px }
+.btn-primary { padding:10px 18px; border-radius:8px; font-weight:500 }
+.btn-secondary { border-radius:8px; padding:10px 18px }
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .page-profile .settings-grid,
+  .page-profile-settings .settings-grid { grid-template-columns:1fr; gap:16px }
+  .page-profile .settings-nav,
+  .page-profile-settings .settings-nav { flex-direction:row; overflow-x:auto; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.02) }
+}
+
+/* Recent Orders styling - card-like appearance */
+.recent-orders-table { width:100%; border-collapse:collapse; margin-top:16px }
+.recent-orders-table th { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-muted); padding:12px; background:transparent; border-bottom:1px solid rgba(255,255,255,0.03) }
+.recent-orders-table td { padding:16px 12px; border:none; font-size:0.875rem; color:var(--text-primary) }
+.recent-orders-table tbody tr { display:grid; grid-template-columns: 120px auto 200px 100px 120px; gap:16px; align-items:center; padding:16px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); border:1px solid rgba(255,255,255,0.02); border-radius:10px; margin-bottom:12px; transition:all 200ms }
+.recent-orders-table tbody tr:hover { background:rgba(0,200,240,0.03); border-color:rgba(0,200,240,0.1) }
+.recent-orders-table .order-id { font-family:var(--font-mono); font-size:0.8125rem; color:var(--accent-primary); font-weight:600 }
+.recent-orders-table .buyer-cell { display:flex; flex-direction:column; gap:2px }
+.recent-orders-table .buyer-name { font-weight:500 }
+.recent-orders-table .buyer-email { font-size:0.75rem; color:var(--text-muted) }
+.recent-orders-table .amount-cell { color:var(--accent-success); font-weight:600; font-size:0.9375rem }
+.recent-orders-table .status-cell { display:flex; align-items:center; gap:6px }
+.recent-orders-table .status-badge { padding:4px 10px; border-radius:6px; font-size:0.75rem; font-weight:600 }
+.recent-orders-table .status-badge.completed { background:rgba(34,197,94,0.1); color:var(--accent-success) }
+.recent-orders-table .status-badge.pending { background:rgba(234,179,8,0.1); color:var(--accent-warning) }
+.recent-orders-table .status-badge.disputed { background:rgba(239,68,68,0.1); color:var(--accent-danger) }
+
+/* Recent orders header section */
+.recent-orders-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px }
+.recent-orders-header h3 { font-size:1.125rem; font-weight:600; margin:0 }
+.recent-orders-header .view-all-btn { font-size:0.875rem; color:var(--accent-primary); text-decoration:none; transition:color 200ms }
+.recent-orders-header .view-all-btn:hover { color:var(--accent-primary-hover) }
+
+/* Store Pages: Cart, Checkout, Payment Enhancements */
+.page-cart .data-table tbody tr { display:table-row; height:auto; padding:0; background:none; border:1px solid rgba(255,255,255,0.02); margin-bottom:0; }
+.page-cart .data-table tbody tr:hover { background:rgba(0,200,240,0.02) }
+.page-cart .card { box-shadow:0 4px 12px rgba(0,0,0,0.15) }
+
+.page-checkout .data-table tbody tr { display:table-row; height:auto; padding:0; background:none; border:1px solid rgba(255,255,255,0.02); margin-bottom:0; }
+.page-checkout .data-table tbody tr:hover { background:rgba(0,200,240,0.02) }
+.page-checkout .card { box-shadow:0 4px 12px rgba(0,0,0,0.15) }
+
+.page-payment h3 { font-size:1.125rem; font-weight:600; margin-bottom:16px; margin-top:0 }
+.page-payment .btn { padding:10px 18px; border-radius:8px; font-weight:500; transition:all 200ms }
+.page-payment .btn-primary { background:var(--accent-primary); color:white; border:1px solid var(--accent-primary) }
+.page-payment .btn-primary:hover { background:var(--accent-primary-hover); border-color:var(--accent-primary-hover) }
+.page-payment .btn-outline { background:transparent; color:var(--text-primary); border:1px solid var(--border-color) }
+.page-payment .btn-outline:hover { background:rgba(0,200,240,0.05); border-color:var(--accent-primary) }
+
+/* Responsive Payment Layout */
+@media (max-width: 1024px) {
+  .page-payment > div[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+}
+
+/* Store: PaymentConfirmation Success State */
+.page-payment-confirmation { display:flex; align-items:center; justify-content:center; min-height:300px; padding:40px 24px; flex-direction:column; text-align:center }
+.page-payment-confirmation > *:first-child { margin-top:0 }
+
+/* Button Styling for Store Pages */
+.btn { display:inline-flex; align-items:center; gap:8px; padding:10px 16px; background:var(--bg-card); border:1px solid var(--border-color); color:var(--text-primary); border-radius:8px; font-size:0.875rem; font-weight:500; cursor:pointer; transition:all 200ms; text-decoration:none; }
+.btn:hover { border-color:var(--accent-primary); color:var(--accent-primary) }
+.btn-primary { background:var(--accent-primary); color:white; border-color:var(--accent-primary) }
+.btn-primary:hover { background:var(--accent-primary-hover); border-color:var(--accent-primary-hover) }
+.btn-outline { background:transparent; border:1px solid var(--border-color); }
+.btn-outline:hover { background:rgba(0,200,240,0.05); border-color:var(--accent-primary) }
+.btn-sm { padding:6px 12px; font-size:0.8125rem }
+
+/* Recent Products styling */
+.recent-products { display:flex; gap:16px; overflow-x:auto; padding-bottom:12px; margin-top:16px }
+.product-card-compact { flex:0 0 auto; width:180px; padding:16px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); border:1px solid rgba(255,255,255,0.02); border-radius:10px; transition:all 200ms; cursor:pointer }
+.product-card-compact:hover { background:rgba(0,200,240,0.03); border-color:rgba(0,200,240,0.1); transform:translateY(-2px) }
+.product-card-compact .product-image { width:100%; height:140px; background:rgba(255,255,255,0.02); border-radius:6px; margin-bottom:10px; object-fit:cover }
+.product-card-compact .product-name { font-size:0.875rem; font-weight:600; margin-bottom:6px; color:var(--text-primary) }
+.product-card-compact .product-price { color:var(--accent-success); font-weight:600; font-size:0.9375rem }
+.product-card-compact .product-status { font-size:0.75rem; color:var(--text-muted); margin-top:6px }
+
+/* Alert / Flash Messages */
+.alert { padding:16px; border-radius:8px; margin-bottom:16px; font-weight:500 }
+.alert-success { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); color:#22c55e }
+.alert-danger { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444 }
+.alert-warning { background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); color:#f97316 }
+.alert-info { background:rgba(0,200,240,0.1); border:1px solid rgba(0,200,240,0.3); color:#00c8f0 }
+
+/* Responsive adjustments for orders and products */
+@media (max-width: 1024px) {
+  .recent-orders-table tbody tr { grid-template-columns: 100px auto 150px 90px 100px; font-size:0.8125rem }
+  .recent-orders-table td { padding:12px 8px }
+}
+
+@media (max-width: 768px) {
+  .recent-orders-table tbody tr { grid-template-columns: 1fr; gap:8px }
+  .recent-orders-table td { padding:8px 12px }
+  .product-card-compact { width:150px }
+}
+

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using N3DMMarket.Models.Db;
 
 namespace Marketplace.Models
 {
@@ -70,6 +71,8 @@ namespace Marketplace.Models
         public string Role { get; set; } = "Customer";
         public string SellerStatus { get; set; } = string.Empty;  // "Pending" | "Approved" | ""
         public string AvatarInitials { get; set; } = "U";
+        public string? ProfileImagePath { get; set; }
+        public IFormFile? ProfileImage { get; set; }
     }
 
     // ── Purchase History ─────────────────────────────────
@@ -140,6 +143,26 @@ namespace Marketplace.Models
         public int ActiveProducts { get; set; }
         public int TotalViews { get; set; }
         public decimal ConversionRate { get; set; }
+        public List<RecentOrderRow> RecentOrders { get; set; } = new();
+        public List<TopProductRow> TopProducts { get; set; } = new();
+    }
+
+    public class RecentOrderRow
+    {
+        public string OrderId { get; set; } = string.Empty;
+        public string BuyerName { get; set; } = string.Empty;
+        public string BuyerEmail { get; set; } = string.Empty;
+        public decimal Amount { get; set; }
+        public string Status { get; set; } = "Completed";
+        public DateTime CreatedDate { get; set; }
+    }
+
+    public class TopProductRow
+    {
+        public int ProductId { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public int Sales { get; set; }
+        public decimal Revenue { get; set; }
     }
 
     public class SellerProductRow
@@ -153,6 +176,7 @@ namespace Marketplace.Models
         public decimal Revenue { get; set; }
         public string Status { get; set; } = "Draft";
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public string ThumbnailUrl { get; set; } = string.Empty;
     }
 
     public class ProductFormViewModel
@@ -177,6 +201,8 @@ namespace Marketplace.Models
         public decimal CommissionRate { get; set; }
         public string PayoutMethod { get; set; } = string.Empty;
         public string PayoutAccount { get; set; } = string.Empty;
+        public List<PayoutHistoryRow> PayoutHistory { get; set; } = new();
+        public List<TopProductRow> TopEarningProducts { get; set; } = new();
     }
 
     public class SellerAnalyticsViewModel
@@ -222,5 +248,11 @@ namespace Marketplace.Models
         public decimal SellerEarnings { get; set; }
         public DateTime OrderDate { get; set; }
         public string Status { get; set; } = string.Empty;
+    }
+
+    public class AvailablePromotionsViewModel
+    {
+        public string OrderId { get; set; } = string.Empty;
+        public List<Promotion> Promotions { get; set; } = new();
     }
 }

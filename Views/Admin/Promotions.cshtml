@@ -1,0 +1,76 @@
+@model List<N3DMMarket.Models.Db.Promotion>
+@{
+    ViewData["Title"] = "Promotions";
+    ViewData["ActivePage"] = "Admin";
+    ViewData["AdminPage"] = "Promotions";
+    Layout = "_AdminLayout";
+}
+
+<h1>Promotions</h1>
+<p class="page-desc">Manage promotions and coupons available on the platform.</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="store-toolbar" style="margin-bottom:16px;">
+    <a class="btn btn-primary" href="@Url.Action("CreatePromotion","Admin")">Create Promotion</a>
+    <a class="btn btn-ghost" href="@Url.Action("PromotionLogs","Admin")" style="margin-left:8px;">View Promotion Logs</a>
+</div>
+
+<div class="card">
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Max Uses</th>
+                    <th>Per-User</th>
+                    <th>Applies To</th>
+                    <th>Active</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    foreach (var p in Model)
+                    {
+                        <tr>
+                            <td>#@p.Id</td>
+                            <td>@p.Name</td>
+                            <td>@p.Code</td>
+                            <td>@p.Type</td>
+                            <td>@p.Value</td>
+                            <td>@(p.MaxUses?.ToString() ?? "—")</td>
+                            <td>@(p.MaxUsesPerUser?.ToString() ?? "—")</td>
+                            <td>@(string.IsNullOrWhiteSpace(p.AppliesTo) ? "All" : p.AppliesTo)</td>
+                            <td>@(p.IsActive ? "Yes" : "No")</td>
+                            <td style="text-align:right;">
+                                <a class="btn btn-ghost btn-sm" href="@Url.Action("EditPromotion","Admin", new { id = p.Id })">Edit</a>
+                                <form method="post" action="@Url.Action("DeletePromotion","Admin")" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@p.Id" />
+                                    <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('Delete this promotion?');">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="7">No promotions found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

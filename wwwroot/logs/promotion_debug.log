@@ -1,0 +1,14 @@
+[2026-04-04T20:35:44.2014311Z] CreatePromotion POST called
+Model: Name=WWW, Code=WWW123, Type=Percentage, Value=111, MinOrderAmount=111, MaxUses=111, MaxUsesPerUser=111, AppliesTo=All, IsActive=True, StartDate=01-Feb-22 11:01:00 AM, EndDate=02-Mar-22 1:01:00 AM
+ModelState invalid:
+ - IsActive: The value 'on' is not valid for IsActive. ()
+[2026-04-04T20:36:08.2410378Z] CreatePromotion POST called
+Model: Name=WWW, Code=WWW123, Type=Percentage, Value=111, MinOrderAmount=111, MaxUses=111, MaxUsesPerUser=111, AppliesTo=All, IsActive=True, StartDate=01-Feb-22 11:01:00 AM, EndDate=02-Mar-22 1:01:00 AM
+ModelState invalid:
+ - IsActive: The value 'on' is not valid for IsActive. ()
+[2026-04-04T20:36:35.0614634Z] CreatePromotion POST called
+Model: Name=WWW, Code=WWW123, Type=Percentage, Value=111, MinOrderAmount=111, MaxUses=111, MaxUsesPerUser=111, AppliesTo=All, IsActive=True, StartDate=01-Feb-22 11:01:00 AM, EndDate=02-Mar-22 1:01:00 AM
+ModelState invalid:
+ - IsActive: The value 'on' is not valid for IsActive. ()
+[2026-04-04T20:46:54.2821768Z] CreatePromotion POST called
+Model: Name=NEW, Code=NEW, Type=Percentage, Value=222, MinOrderAmount=22, MaxUses=222, MaxUsesPerUser=222, AppliesTo=All, IsActive=False, StartDate=02-Feb-22 2:02:00 PM, EndDate=02-May-22 2:02:00 PM

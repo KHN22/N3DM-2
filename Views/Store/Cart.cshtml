@@ -2,9 +2,11 @@
 
 @{
     ViewData["Title"] = "Your Cart";
+    var userEmail = Context.Session.GetString("CurrentUserEmail");
+    var isLoggedIn = !string.IsNullOrEmpty(userEmail);
 }
 
-<div class="container" style="padding-top:28px;">
+<div class="container page-cart" style="padding-top:28px;">
     <h1>Your Cart</h1>
     @if (Model == null || Model.Count == 0)
     {
@@ -12,30 +14,82 @@
     }
     else
     {
-        <table class="table">
-            <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th>Total</th><th></th></tr></thead>
-            <tbody>
-            @foreach(var item in Model)
-            {
-                <tr>
-                    <td>@item.Title</td>
-                    <td>$@item.Price.ToString("F2")</td>
-                    <td>@item.Quantity</td>
-                    <td>$@((item.Price * item.Quantity).ToString("F2"))</td>
-                    <td>
-                        <form asp-action="RemoveFromCart" method="post" style="display:inline">
-                            <input type="hidden" name="id" value="@item.ProductId" />
-                            <button class="btn btn-sm">Remove</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-            </tbody>
-        </table>
+        @if (!isLoggedIn)
+        {
+            <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:10px; padding:16px; margin-bottom:24px;">
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <div>
+                        <p style="margin:0 0 8px; font-weight:600; color:var(--accent-danger);">Login Required</p>
+                        <p style="margin:0 0 12px; color:var(--text-muted); font-size:0.875rem;">You must be logged in to purchase items on our marketplace.</p>
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-primary" style="display:inline-flex; padding:8px 16px; font-size:0.875rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                <polyline points="10 17 15 12 10 7"/>
+                            </svg>
+                            Login Here
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="card">
+            <div style="overflow-x:auto;">
+                <table class="data-table" style="margin-bottom:0;">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th style="width:80px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model)
+                        {
+                            <tr>
+                                <td style="color:var(--text-primary); font-weight:500;">@item.Title</td>
+                                <td>$@item.Price.ToString("F2")</td>
+                                <td>@item.Quantity</td>
+                                <td style="color:var(--accent-success); font-weight:600;">$@((item.Price * item.Quantity).ToString("F2"))</td>
+                                <td>
+                                    <form asp-action="RemoveFromCart" method="post" style="display:inline">
+                                        <input type="hidden" name="id" value="@item.ProductId" />
+                                        <button class="btn btn-sm btn-outline" onclick="return confirm('Remove from cart?')">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-        <div style="margin-top:12px;">
-            <a class="btn btn-primary" href="@Url.Action("Checkout", "Store")">Proceed to checkout</a>
-            <a class="btn" href="/Store">Continue shopping</a>
+        <div style="margin-top:20px; display:flex; gap:12px;">
+            @if (isLoggedIn)
+            {
+                <a class="btn btn-primary" href="@Url.Action("Checkout", "Store")">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; margin-right:6px;">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                    Proceed to Checkout
+                </a>
+            }
+            else
+            {
+                <button class="btn btn-primary" disabled style="opacity:0.5; cursor:not-allowed;" title="Login required">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; margin-right:6px;">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                    Proceed to Checkout (Login required)
+                </button>
+            }
+            <a class="btn btn-outline" href="/Store">Continue Shopping</a>
         </div>
     }
 </div>

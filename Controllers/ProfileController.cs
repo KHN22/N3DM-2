@@ -39,6 +39,7 @@ namespace Marketplace.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            var initials = GetInitials(user.FullName);
             var vm = new ProfileViewModel
             {
                 FullName = user.FullName,
@@ -46,7 +47,8 @@ namespace Marketplace.Controllers
                 Bio = string.Empty,
                 Role = user.Role?.RoleName ?? string.Empty,
                 SellerStatus = string.Empty,
-                AvatarInitials = "U"
+                AvatarInitials = initials,
+                ProfileImagePath = user.ProfileImagePath
             };
 
             return View(vm);
@@ -64,11 +66,102 @@ namespace Marketplace.Controllers
             if (user == null) return RedirectToAction("Login", "Account");
 
             user.FullName = model.FullName;
-            // profile fields that don't exist in DB are left out or you can add columns
+
+            // Handle profile image upload
+            if (model.ProfileImage != null && model.ProfileImage.Length > 0)
+            {
+                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profiles");
+                if (!Directory.Exists(uploadsDir))
+                    Directory.CreateDirectory(uploadsDir);
+
+                var fileName = $"{user.UserId}_{Guid.NewGuid()}_{model.ProfileImage.FileName}";
+                var filePath = Path.Combine(uploadsDir, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.ProfileImage.CopyTo(stream);
+                }
+
+                // Delete old image if exists
+                if (!string.IsNullOrEmpty(user.ProfileImagePath))
+                {
+                    var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfileImagePath.TrimStart('/'));
+                    if (System.IO.File.Exists(oldFilePath))
+                        System.IO.File.Delete(oldFilePath);
+                }
+
+                user.ProfileImagePath = $"/uploads/profiles/{fileName}";
+            }
+
             _context.Users.Update(user);
             _context.SaveChanges();
 
+            model.ProfileImagePath = user.ProfileImagePath;
+            model.AvatarInitials = GetInitials(user.FullName);
+            TempData["Success"] = "Profile updated successfully!";
             return View(model);
+        }
+
+        // POST: /Profile/UploadImage (AJAX upload)
+        [HttpPost]
+        public IActionResult UploadImage(IFormFile image)
+        {
+            var email = HttpContext.Session.GetString("CurrentUserEmail");
+            if (string.IsNullOrEmpty(email)) return Json(new { success = false, error = "Not logged in" });
+
+            var normalizedEmail = (email ?? string.Empty).Trim().ToUpper();
+            var user = _context.Users.FirstOrDefault(u => u.Email.ToUpper() == normalizedEmail);
+            if (user == null) return Json(new { success = false, error = "User not found" });
+
+            if (image == null || image.Length == 0)
+                return Json(new { success = false, error = "No image provided" });
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var ext = Path.GetExtension(image.FileName).ToLower();
+            if (!allowedExtensions.Contains(ext))
+                return Json(new { success = false, error = "Invalid file type" });
+
+            try
+            {
+                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profiles");
+                if (!Directory.Exists(uploadsDir))
+                    Directory.CreateDirectory(uploadsDir);
+
+                var fileName = $"{user.UserId}_{Guid.NewGuid()}{ext}";
+                var filePath = Path.Combine(uploadsDir, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    image.CopyTo(stream);
+                }
+
+                // Delete old image if exists
+                if (!string.IsNullOrEmpty(user.ProfileImagePath))
+                {
+                    var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfileImagePath.TrimStart('/'));
+                    if (System.IO.File.Exists(oldFilePath))
+                        System.IO.File.Delete(oldFilePath);
+                }
+
+                user.ProfileImagePath = $"/uploads/profiles/{fileName}";
+                _context.Users.Update(user);
+                _context.SaveChanges();
+
+                return Json(new { success = true, imagePath = user.ProfileImagePath });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+        private string GetInitials(string fullName)
+        {
+            if (string.IsNullOrEmpty(fullName)) return "U";
+            var parts = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 0) return "U";
+            if (parts.Length == 1) return parts[0].Substring(0, Math.Min(2, parts[0].Length)).ToUpper();
+            return ($"{parts[0][0]}{parts[parts.Length - 1][0]}").ToUpper();
         }
 
         // GET: /Profile/History
@@ -152,6 +245,65 @@ namespace Marketplace.Controllers
         // GET: /Profile/Settings
         public IActionResult Settings()
         {
+            return View();
+        }
+
+        // POST: /Profile/Settings (change password)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Settings(string CurrentPassword, string NewPassword, string ConfirmNewPassword)
+        {
+            var email = HttpContext.Session.GetString("CurrentUserEmail");
+            if (string.IsNullOrEmpty(email)) return RedirectToAction("Login", "Account");
+
+            var normalizedEmail = (email ?? string.Empty).Trim().ToUpper();
+            var user = _context.Users.FirstOrDefault(u => u.Email.ToUpper() == normalizedEmail);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            // Validate inputs
+            if (string.IsNullOrWhiteSpace(CurrentPassword))
+            {
+                TempData["Error"] = "Current password is required.";
+                return View();
+            }
+
+            if (string.IsNullOrWhiteSpace(NewPassword))
+            {
+                TempData["Error"] = "New password is required.";
+                return View();
+            }
+
+            if (NewPassword.Length < 6)
+            {
+                TempData["Error"] = "New password must be at least 6 characters long.";
+                return View();
+            }
+
+            if (NewPassword != ConfirmNewPassword)
+            {
+                TempData["Error"] = "New passwords do not match.";
+                return View();
+            }
+
+            if (CurrentPassword == NewPassword)
+            {
+                TempData["Error"] = "New password must be different from current password.";
+                return View();
+            }
+
+            // Verify current password
+            if (user.Password != CurrentPassword)
+            {
+                TempData["Error"] = "Current password is incorrect.";
+                return View();
+            }
+
+            // Update password
+            user.Password = NewPassword;
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            TempData["Success"] = "Password changed successfully!";
             return View();
         }
     }

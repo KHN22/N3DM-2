@@ -119,9 +119,9 @@
                                 </div>
                                 <div class="upload-text">
                                     <span class="upload-title">Upload thumbnail</span>
-                                    <span class="upload-hint">PNG, JPG (Recommended: 800x600px)</span>
+                                    <span class="upload-hint">PNG, JPG, GIF (Recommended: 800x600px)</span>
                                 </div>
-                                <input type="file" name="ThumbnailFile" accept=".png,.jpg,.jpeg,.webp" hidden />
+                                <input type="file" name="ThumbnailFile" accept=".png,.jpg,.jpeg,.gif,.webp" hidden />
                                 @if (!string.IsNullOrEmpty(Model?.ThumbnailUrl))
                                 {
                                     <div class="thumbnail-preview">
@@ -350,4 +350,134 @@
             </div>
         </div>
     </form>
+
+    <script>
+        // Initialize drag-and-drop for file upload zones
+        document.querySelectorAll('.file-upload-zone').forEach(zone => {
+            const input = zone.querySelector('input[type="file"]');
+            const isThumbnail = zone.id === 'thumbnailUpload';
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // Highlight on drag over
+            ['dragenter', 'dragover'].forEach(eventName => {
+                zone.addEventListener(eventName, () => {
+                    zone.style.backgroundColor = 'rgba(0, 200, 240, 0.1)';
+                    zone.style.borderColor = 'var(--accent-primary)';
+                }, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, () => {
+                    zone.style.backgroundColor = '';
+                    zone.style.borderColor = '';
+                }, false);
+            });
+            
+            // Function to show thumbnail preview
+            function showThumbnailPreview(file) {
+                if (!isThumbnail) return;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // Remove old preview if exists
+                    const oldPreview = zone.querySelector('.thumbnail-preview');
+                    if (oldPreview) oldPreview.remove();
+                    
+                    // Create preview container
+                    const preview = document.createElement('div');
+                    preview.className = 'thumbnail-preview';
+                    preview.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 8px; z-index: 10;';
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.cssText = 'max-width: 90%; max-height: 90%; border-radius: 6px;';
+                    
+                    preview.appendChild(img);
+                    zone.style.position = 'relative';
+                    zone.appendChild(preview);
+                    
+                    // Update upload text
+                    const uploadText = zone.querySelector('.upload-text');
+                    if (uploadText) {
+                        uploadText.innerHTML = `<span class="upload-title" style="color:var(--accent-success); font-weight:600;">✓ ${file.name}</span>`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            // Handle drop
+            zone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    input.files = files;
+                    
+                    if (isThumbnail) {
+                        showThumbnailPreview(files[0]);
+                    } else {
+                        // For non-thumbnail uploads, just show filename
+                        const uploadText = zone.querySelector('.upload-text');
+                        if (uploadText) {
+                            const fileName = files[0].name;
+                            uploadText.innerHTML = `<span class="upload-title" style="color:var(--accent-success); font-weight:600;">✓ ${fileName}</span>`;
+                        }
+                    }
+                }
+            }, false);
+            
+            // Handle click to browse
+            const uploadLink = zone.querySelector('.upload-link');
+            if (uploadLink) {
+                uploadLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    input.click();
+                });
+            }
+            
+            // Handle file selection via browse dialog
+            input.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    if (isThumbnail) {
+                        showThumbnailPreview(e.target.files[0]);
+                    } else {
+                        const uploadText = zone.querySelector('.upload-text');
+                        if (uploadText) {
+                            const fileName = e.target.files[0].name;
+                            uploadText.innerHTML = `<span class="upload-title" style="color:var(--accent-success); font-weight:600;">✓ ${fileName}</span>`;
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Price calculation
+        const priceInput = document.getElementById('price');
+        if (priceInput) {
+            function updatePriceBreakdown() {
+                const price = parseFloat(priceInput.value) || 0;
+                const platformFee = price * 0.15;
+                const yourEarnings = price - platformFee;
+                
+                const feeEl = document.querySelector('.fee-amount');
+                const earningsEl = document.querySelector('.earnings-amount');
+                
+                if (feeEl) feeEl.textContent = `-$${platformFee.toFixed(2)}`;
+                if (earningsEl) earningsEl.textContent = `$${yourEarnings.toFixed(2)}`;
+            }
+            
+            priceInput.addEventListener('input', updatePriceBreakdown);
+            updatePriceBreakdown();
+        }
+    </script>
 </div>

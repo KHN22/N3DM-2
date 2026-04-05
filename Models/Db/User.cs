@@ -19,5 +19,7 @@ public partial class User
 
     public bool? IsActive { get; set; }
 
+    public string? ProfileImagePath { get; set; }
+
     public virtual Role Role { get; set; } = null!;
 }
