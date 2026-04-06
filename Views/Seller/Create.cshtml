@@ -118,7 +118,7 @@
                                     </svg>
                                 </div>
                                 <div class="upload-text">
-                                    <span class="upload-title">Upload thumbnail</span>
+                                    <span class="upload-title">Upload thumbnail <span class="upload-link">browse</span></span>
                                     <span class="upload-hint">PNG, JPG, GIF (Recommended: 800x600px)</span>
                                 </div>
                                 <input type="file" name="ThumbnailFile" accept=".png,.jpg,.jpeg,.gif,.webp" hidden />
@@ -383,33 +383,37 @@
                 }, false);
             });
             
-            // Function to show thumbnail preview
+            // Function to show thumbnail preview (inline, non-blocking)
             function showThumbnailPreview(file) {
                 if (!isThumbnail) return;
-                
+
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    // Remove old preview if exists
                     const oldPreview = zone.querySelector('.thumbnail-preview');
                     if (oldPreview) oldPreview.remove();
-                    
-                    // Create preview container
+
                     const preview = document.createElement('div');
                     preview.className = 'thumbnail-preview';
-                    preview.style.cssText = 'position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 8px; z-index: 10;';
-                    
+                    preview.style.cssText = 'display: inline-flex; align-items: center; justify-content: center; background: transparent; padding: 0; border-radius: 6px; z-index: auto;';
+
                     const img = document.createElement('img');
                     img.src = e.target.result;
-                    img.style.cssText = 'max-width: 90%; max-height: 90%; border-radius: 6px;';
-                    
+                    img.style.cssText = 'max-width: 160px; max-height: 120px; border-radius: 6px;';
+
                     preview.appendChild(img);
-                    zone.style.position = 'relative';
-                    zone.appendChild(preview);
-                    
-                    // Update upload text
+
+                    // Insert preview into the zone (replace upload-text visually)
                     const uploadText = zone.querySelector('.upload-text');
-                    if (uploadText) {
-                        uploadText.innerHTML = `<span class="upload-title" style="color:var(--accent-success); font-weight:600;">✓ ${file.name}</span>`;
+                    if (uploadText) uploadText.style.display = 'none';
+
+                    zone.appendChild(preview);
+
+                    // Update the visible title (small confirmation)
+                    const titleEl = zone.querySelector('.upload-title');
+                    if (titleEl) {
+                        titleEl.textContent = `✓ ${file.name}`;
+                        titleEl.style.color = 'var(--accent-success)';
+                        titleEl.style.fontWeight = '600';
                     }
                 };
                 reader.readAsDataURL(file);
@@ -436,14 +440,13 @@
                 }
             }, false);
             
-            // Handle click to browse
-            const uploadLink = zone.querySelector('.upload-link');
-            if (uploadLink) {
-                uploadLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    input.click();
-                });
-            }
+            // Make the whole zone clickable to open file dialog, and also support the inner 'browse' link
+            zone.addEventListener('click', (e) => {
+                // If clicking a real input or link inside the zone, let that handle it
+                const tag = e.target.tagName ? e.target.tagName.toLowerCase() : '';
+                if (tag === 'input' || e.target.classList.contains('upload-link')) return input.click();
+                input.click();
+            });
             
             // Handle file selection via browse dialog
             input.addEventListener('change', (e) => {

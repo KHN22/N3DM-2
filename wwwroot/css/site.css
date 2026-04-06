@@ -2275,6 +2275,34 @@ img {
     }
 }
 
+/* Make upload zones clearly clickable and ensure thumbnail previews inside the upload zone
+   are inline and do not create a fullscreen overlay that blocks the UI. */
+.file-upload-zone {
+    cursor: pointer;
+}
+
+.file-upload-zone .thumbnail-preview {
+    /* Override the global modal-like preview for inline use inside upload zones */
+    position: static;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 6px;
+    z-index: auto;
+    animation: none;
+}
+
+.file-upload-zone .thumbnail-preview img {
+    max-width: 160px;
+    max-height: 120px;
+    box-shadow: none;
+}
+
 .preview-images-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
