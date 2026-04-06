@@ -42,7 +42,7 @@ namespace Marketplace.Controllers
         // GET: /Store/Details/1
         public IActionResult Details(int id)
         {
-            var p = _db.Products.FirstOrDefault(x => x.ProductId == id);
+            var p = _db.Products.Include(x => x.Seller).FirstOrDefault(x => x.ProductId == id);
             if (p == null) return NotFound();
             var product = new ProductViewModel
             {
@@ -50,8 +50,8 @@ namespace Marketplace.Controllers
                 Title = p.Title,
                 Price = p.Price,
                 Category = p.Category,
-                ThumbnailUrl = p.ThumbnailUrl,
-                Seller = string.Empty,
+                ThumbnailUrl = string.IsNullOrEmpty(p.ThumbnailUrl) ? "/images/placeholder-product.png" : p.ThumbnailUrl,
+                Seller = p.Seller != null ? p.Seller.FullName : string.Empty,
                 Tags = new List<string>()
             };
             return View(product);
