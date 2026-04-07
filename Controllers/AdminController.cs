@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Marketplace.Models;
+using System.Linq;
 using N3DMMarket.Filters;
 using N3DMMarket.Models.Db;
 using Microsoft.EntityFrameworkCore;
@@ -336,6 +337,17 @@ namespace Marketplace.Controllers
                     }
                 }
 
+                // Normalize IsActive from form (checkbox may post "on" or "true")
+                if (Request?.Form?.ContainsKey("IsActive") == true)
+                {
+                    var vals = Request.Form["IsActive"];
+                    var isActive = vals.Any(v => v.Equals("true", StringComparison.OrdinalIgnoreCase)
+                                                 || v.Equals("on", StringComparison.OrdinalIgnoreCase)
+                                                 || v == "1");
+                    model.IsActive = isActive;
+                    ModelState.Remove("IsActive");
+                }
+
                 if (model == null) return BadRequest();
                 if (string.IsNullOrWhiteSpace(model.Name))
                 {
@@ -383,6 +395,52 @@ namespace Marketplace.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult EditPromotion(Promotion model)
         {
+            // Normalize IsActive from form (checkbox may post "on" or "true")
+            if (Request?.Form?.ContainsKey("IsActive") == true)
+            {
+                var vals = Request.Form["IsActive"];
+                var isActive = vals.Any(v => v.Equals("true", StringComparison.OrdinalIgnoreCase)
+                                             || v.Equals("on", StringComparison.OrdinalIgnoreCase)
+                                             || v == "1");
+                model.IsActive = isActive;
+                ModelState.Remove("IsActive");
+            }
+
+            // Log the incoming model for debugging
+            try
+            {
+                var logPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "logs");
+                System.IO.Directory.CreateDirectory(logPath);
+                var file = System.IO.Path.Combine(logPath, "promotion_debug.log");
+                using (var sw = System.IO.File.AppendText(file))
+                {
+                    sw.WriteLine($"[{DateTime.UtcNow:O}] EditPromotion POST called");
+                    if (model == null)
+                    {
+                        sw.WriteLine("Model: null");
+                    }
+                    else
+                    {
+                        sw.WriteLine($"Model: Id={model.Id}, Name={model.Name}, Code={model.Code}, Type={model.Type}, Value={model.Value}, MinOrderAmount={model.MinOrderAmount}, MaxUses={model.MaxUses}, MaxUsesPerUser={model.MaxUsesPerUser}, AppliesTo={model.AppliesTo}, IsActive={model.IsActive}, StartDate={model.StartDate}, EndDate={model.EndDate}");
+                    }
+                    if (!ModelState.IsValid)
+                    {
+                        sw.WriteLine("ModelState invalid:");
+                        foreach (var kv in ModelState)
+                        {
+                            if (kv.Value.Errors.Count > 0)
+                            {
+                                foreach (var err in kv.Value.Errors)
+                                {
+                                    sw.WriteLine($" - {kv.Key}: {err.ErrorMessage} ({err.Exception?.Message})");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+
             if (!ModelState.IsValid) return View(model);
             var promo = _db.Promotions.FirstOrDefault(p => p.Id == model.Id);
             if (promo == null) return NotFound();
@@ -393,7 +451,19 @@ namespace Marketplace.Controllers
             promo.MinOrderAmount = model.MinOrderAmount;
             promo.StartDate = model.StartDate;
             promo.EndDate = model.EndDate;
-            promo.IsActive = model.IsActive;
+            // Ensure IsActive is taken from the actual form submission to avoid model-binding quirks
+            if (Request?.Form?.ContainsKey("IsActive") == true)
+            {
+                var vals = Request.Form["IsActive"];
+                var isActive = vals.Any(v => v.Equals("true", StringComparison.OrdinalIgnoreCase)
+                                             || v.Equals("on", StringComparison.OrdinalIgnoreCase)
+                                             || v == "1");
+                promo.IsActive = isActive;
+            }
+            else
+            {
+                promo.IsActive = model.IsActive;
+            }
             promo.Metadata = model.Metadata;
             _db.SaveChanges();
             TempData["Success"] = "Promotion updated successfully.";

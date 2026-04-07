@@ -12,3 +12,17 @@ ModelState invalid:
  - IsActive: The value 'on' is not valid for IsActive. ()
 [2026-04-04T20:46:54.2821768Z] CreatePromotion POST called
 Model: Name=NEW, Code=NEW, Type=Percentage, Value=222, MinOrderAmount=22, MaxUses=222, MaxUsesPerUser=222, AppliesTo=All, IsActive=False, StartDate=02-Feb-22 2:02:00 PM, EndDate=02-May-22 2:02:00 PM
+[2026-04-07T04:51:55.5425596Z] CreatePromotion POST called
+Model: Name=TEST, Code=TEST, Type=Percentage, Value=10, MinOrderAmount=, MaxUses=100, MaxUsesPerUser=2, AppliesTo=All, IsActive=False, StartDate=07-Apr-26 12:00:00 AM, EndDate=08-Apr-26 12:00:00 AM
+[2026-04-07T04:57:45.1740099Z] CreatePromotion POST called
+Model: Name=TEST, Code=TEST, Type=FixedAmount, Value=10, MinOrderAmount=0, MaxUses=100, MaxUsesPerUser=1, AppliesTo=All, IsActive=False, StartDate=07-Apr-26 12:00:00 AM, EndDate=08-Apr-26 12:00:00 AM
+[2026-04-07T05:06:21.8110053Z] CreatePromotion POST called
+Model: Name=TEST2, Code=TEST2, Type=Percentage, Value=10, MinOrderAmount=0, MaxUses=10, MaxUsesPerUser=1, AppliesTo=All, IsActive=False, StartDate=07-Apr-26 12:00:00 AM, EndDate=08-Apr-26 12:00:00 AM
+[2026-04-07T05:10:05.1006202Z] CreatePromotion POST called
+Model: Name=TEST, Code=TEST, Type=Percentage, Value=10, MinOrderAmount=0, MaxUses=10, MaxUsesPerUser=2, AppliesTo=All, IsActive=False, StartDate=07-Apr-26 12:00:00 AM, EndDate=08-Apr-26 12:00:00 AM
+[2026-04-07T05:14:17.7708510Z] EditPromotion POST called
+Model: Id=6, Name=TEST, Code=TEST, Type=Percentage, Value=10.00, MinOrderAmount=0.00, MaxUses=10, MaxUsesPerUser=2, AppliesTo=All, IsActive=False, StartDate=07-Apr-26 12:00:00 AM, EndDate=08-Apr-26 12:00:00 AM
+[2026-04-07T05:23:52.1272546Z] CreatePromotion POST called
+Model: Name=TEST2, Code=TEST2, Type=FixedAmount, Value=10, MinOrderAmount=0, MaxUses=1, MaxUsesPerUser=1, AppliesTo=All, IsActive=False, StartDate=07-Apr-26 12:00:00 AM, EndDate=08-Apr-26 12:00:00 AM
+[2026-04-07T05:24:05.1804282Z] EditPromotion POST called
+Model: Id=6, Name=TEST, Code=TEST, Type=Percentage, Value=10.00, MinOrderAmount=0.00, MaxUses=10, MaxUsesPerUser=2, AppliesTo=All, IsActive=False, StartDate=07-Apr-26 12:00:00 AM, EndDate=08-Apr-26 12:00:00 AM

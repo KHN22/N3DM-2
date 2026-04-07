@@ -55,11 +55,11 @@
     </div>
     <div class="form-row">
         <label>Start Date</label>
-        <input name="StartDate" type="datetime-local" class="form-input" value="@(Model.StartDate?.ToString("yyyy-MM-ddTHH:mm") ?? string.Empty)" />
+        <input name="StartDate" type="date" class="form-input" value="@(Model.StartDate?.ToString("yyyy-MM-dd") ?? string.Empty)" />
     </div>
     <div class="form-row">
         <label>End Date</label>
-        <input name="EndDate" type="datetime-local" class="form-input" value="@(Model.EndDate?.ToString("yyyy-MM-ddTHH:mm") ?? string.Empty)" />
+        <input name="EndDate" type="date" class="form-input" value="@(Model.EndDate?.ToString("yyyy-MM-dd") ?? string.Empty)" />
     </div>
     <div class="form-row">
         <label>Metadata (JSON)</label>

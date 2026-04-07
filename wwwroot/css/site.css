@@ -3690,3 +3690,31 @@ img {
   .product-card-compact { width:150px }
 }
 
+/* Keep date fields matching the site's dark form input, but make the calendar icon light */
+input[type="date"], input[type="date"].form-input {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 10px;
+    box-shadow: none;
+}
+
+/* WebKit: ensure the editable date text area is readable on dark background */
+input[type="date"]::-webkit-datetime-edit {
+    color: var(--text-primary);
+    background-color: transparent;
+}
+
+/* Force the native calendar picker icon to appear light/white on dark themes (Chromium/WebKit) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    /* invert the icon so dark glyphs become light; boost brightness for clarity */
+    filter: invert(1) brightness(1.4) contrast(1.1);
+    opacity: 0.95;
+}
+
+/* Firefox fallback: keep inner background transparent */
+input[type="date"]::-moz-focus-inner {
+    background-color: transparent;
+}
+

@@ -231,7 +231,7 @@ namespace Marketplace.Controllers
             var order = _db.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.OrderId == guid);
             if (order == null) return Content(string.Empty);
 
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var promos = _db.Promotions.Where(p => p.IsActive && (p.StartDate == null || p.StartDate <= now) && (p.EndDate == null || p.EndDate >= now)).ToList();
 
             var itemsTotal = order.OrderItems.Sum(i => i.PriceSnapshot * i.Quantity);
